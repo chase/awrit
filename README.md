@@ -1,6 +1,6 @@
 # Actual Web Rendering in Terminal
 
-Or just AWRIT.
+Or just `awrit`.
 
 Yep, actual Chromium being rendered in your favorite terminal that supports the [Kitty terminal graphics protocol](https://sw.kovidgoyal.net/kitty/graphics-protocol/).
 
@@ -13,17 +13,20 @@ Yep, actual Chromium being rendered in your favorite terminal that supports the 
 
 ## Building
 
-** Prerequisites **
+**Prerequisites**
 
 - CMake v3.22 or newer
-- Ninja
+- [Ninja](https://github.com/ninja-build/ninja/releases)
 
-- Linux:
-    - `build-essential`
-- macOS:
-    - Xcode 13.4
-- Windows 10:
-    - Visual Studio 2019 command line tools
+
+**Linux**:
+  - `build-essential`
+
+**macOS**:
+  - Xcode 13.4
+
+**Windows 10**:
+  - Visual Studio 2019 command line tools
 
 ---
 
