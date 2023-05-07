@@ -25,7 +25,7 @@
 #define CLEAR_SCREEN CSI "H" CSI "2J"
 #define RESET_IRM CSI "4l"
 
-// VT100 Modes
+// VT100/DEC Modes
 enum Mode : int {
   cursor_key_to_app = 1,         // DECCKM
   reverse_video = 5,             // DECSCNM
@@ -48,7 +48,10 @@ enum Mode : int {
 void set_key_enhancements() {
   using namespace KittyKeys;
   fprintf(stdout, CSI ">%d",
-          Flags::disambiguate_escape_codes | Flags::report_event_types);
+          Flags::disambiguate_escape_codes | Flags::report_event_types |
+              Flags::report_alternate_keys |
+              Flags::report_all_keys_as_escape_codes |
+              Flags::report_associated_text);
 }
 
 void restore_key_enhancements() { fputs(CSI "<u", stdout); }

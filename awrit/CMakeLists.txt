@@ -10,6 +10,12 @@ set(AWRIT_SRCS
   main.cc
   awrit.h
   awrit.cc
+  kitty_keys.h
+  utf8_decode.h
+  tty_escape_parser.h
+  tty_escape_parser.cc
+  tty_input_handler.h
+  tty_input_handler.cc
   shared_memory.h
   tui.h
   tui.cc
@@ -17,14 +23,17 @@ set(AWRIT_SRCS
 
 set(AWRIT_SRCS_LINUX
   shared_memory_posix.cc
+  tty_input_handler_posix.cc
   )
 set(AWRIT_SRCS_MAC
   main_mac.mm
   process_helper_mac.cc
   shared_memory_posix.cc
+  tty_input_handler_posix.cc
   )
 set(AWRIT_SRCS_WINDOWS
   shared_memory_win.cc
+  tty_input_handler_win.cc
   )
 APPEND_PLATFORM_SOURCES(AWRIT_SRCS)
 source_group(awrit FILES ${AWRIT_SRCS})

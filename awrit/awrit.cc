@@ -4,7 +4,9 @@
 
 #include "awrit.h"
 
+#include "include/base/cef_atomic_flag.h"
 #include "include/base/cef_callback.h"
+#include "include/base/cef_scoped_refptr.h"
 #include "include/cef_browser.h"
 #include "include/cef_command_line.h"
 #include "include/cef_parser.h"
@@ -127,7 +129,7 @@ void AwritClient::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type,
   Paint(dirtyRects, buffer, width, height);
 }
 
-Awrit::Awrit() {}
+Awrit::Awrit() : quitting_(base::MakeRefCounted<base::AtomicFlag>()) {}
 
 void Awrit::OnContextInitialized() {
   CEF_REQUIRE_UI_THREAD();

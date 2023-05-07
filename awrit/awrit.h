@@ -7,9 +7,9 @@
 
 #include <list>
 
+#include "include/base/cef_atomic_flag.h"
 #include "include/cef_app.h"
 #include "include/cef_render_handler.h"
-#include "include/internal/cef_ptr.h"
 
 class AwritClient : public CefClient,
                     public CefDisplayHandler,
@@ -64,7 +64,6 @@ class AwritClient : public CefClient,
   BrowserList browser_list_;
   bool is_closing_;
 
-  // Include the default reference counting implementation.
   IMPLEMENT_REFCOUNTING(AwritClient);
 };
 
@@ -79,6 +78,8 @@ class Awrit : public CefApp, public CefBrowserProcessHandler {
   CefRefPtr<CefClient> GetDefaultClient() override;
 
  private:
+  scoped_refptr<base::AtomicFlag> quitting_;
+
   IMPLEMENT_REFCOUNTING(Awrit);
 };
 
