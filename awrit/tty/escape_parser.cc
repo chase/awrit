@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be found
 // in the LICENSE file.
 
-#include "tty_escape_parser.h"
+#include "escape_parser.h"
 
 namespace tty {
 
@@ -19,6 +19,15 @@ csi::Char csi_type(char ch) {
   }
   return csi::Char::Unknown;
 }
+
+[[noreturn]] inline void unreachable() {
+#if defined(__GNUC__)  // GCC, Clang, ICC
+  __builtin_unreachable();
+#elif defined(_MSC_VER)  // MSVC
+  __assume(false);
+#endif
+}
+
 }  // namespace
 
 bool EscapeCodeParser::Reset() {
@@ -115,7 +124,7 @@ bool EscapeCodeParser::Byte(uint8_t ch) {
       return CSI(ch);
     case State::ST_or_BEL:
       if (ch == 0x7) return EscapeCode();
-      // this fallthrough is intentional
+      [[fallthrough]];
     case State::ST:
       return ST(ch);
     case State::ESC_ST:
@@ -124,7 +133,11 @@ bool EscapeCodeParser::Byte(uint8_t ch) {
       return C1_ST(ch);
     case State::Normal:
       return true;
+    default:
+      unreachable();
   }
+
+  unreachable();
 }
 
 bool EscapeCodeParser::ESC(uint8_t ch) {
@@ -210,7 +223,7 @@ bool EscapeCodeParser::ESC_ST(uint8_t ch) {
     return EscapeCode();
   } else {
     state_ = State::ST;
-    buffer_ += 0x1b;
+    buffer_ += '\x1b';
     if (ch != 0x1b) buffer_ += ch;
   }
   return true;
@@ -220,7 +233,7 @@ bool EscapeCodeParser::C1_ST(uint8_t ch) {
   if (ch == 0x9c) return EscapeCode();
 
   state_ = State::ST;
-  buffer_ += 0xc2;
+  buffer_ += '\xc2';
   buffer_ += ch;
   return true;
 }

@@ -11,10 +11,8 @@
 CefSize WindowSize();
 
 void Initialize();
+void Restore();
 void Paint(const std::vector<CefRect>& dirtyRects, const void* buffer,
            int width, int height);
-void SetTitle(const std::string& title);
-void PlaceCursor(int x, int y);
-void Restore();
 
 #endif  // AWRIT_TUI_H

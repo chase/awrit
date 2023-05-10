@@ -58,5 +58,6 @@ Thumbs.db
 compile_commands.json
 build/
 .cache
-# other
-third_party/
+# CEF
+DawnCache/
+GPUCache/

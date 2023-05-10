@@ -6,6 +6,7 @@
 
 #include "include/base/cef_atomic_flag.h"
 #include "include/base/cef_callback.h"
+#include "include/base/cef_ref_counted.h"
 #include "include/base/cef_scoped_refptr.h"
 #include "include/cef_browser.h"
 #include "include/cef_command_line.h"
@@ -16,6 +17,7 @@
 #include "include/views/cef_window.h"
 #include "include/wrapper/cef_closure_task.h"
 #include "include/wrapper/cef_helpers.h"
+#include "tty/output.h"
 #include "tui.h"
 
 namespace {
@@ -41,7 +43,7 @@ AwritClient* AwritClient::GetInstance() { return g_awrit_client; }
 void AwritClient::OnTitleChange(CefRefPtr<CefBrowser> browser,
                                 const CefString& title) {
   CEF_REQUIRE_UI_THREAD();
-  SetTitle(title.ToString());
+  tty::out::SetTitle(title.ToString());
 }
 
 void AwritClient::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
@@ -129,7 +131,9 @@ void AwritClient::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type,
   Paint(dirtyRects, buffer, width, height);
 }
 
-Awrit::Awrit() : quitting_(base::MakeRefCounted<base::AtomicFlag>()) {}
+Awrit::Awrit()
+    : quitting_(
+          base::MakeRefCounted<base::RefCountedData<base::AtomicFlag>>()) {}
 
 void Awrit::OnContextInitialized() {
   CEF_REQUIRE_UI_THREAD();

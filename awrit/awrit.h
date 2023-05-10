@@ -78,7 +78,7 @@ class Awrit : public CefApp, public CefBrowserProcessHandler {
   CefRefPtr<CefClient> GetDefaultClient() override;
 
  private:
-  scoped_refptr<base::AtomicFlag> quitting_;
+  scoped_refptr<base::RefCountedData<base::AtomicFlag>> quitting_;
 
   IMPLEMENT_REFCOUNTING(Awrit);
 };

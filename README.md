@@ -31,11 +31,11 @@ Yep, actual Chromium being rendered in your favorite terminal that supports the 
 ---
 
 ``` bash
-mkdir build && cd build
-
 # On Windows only:
 # "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars64.bat"
 
-cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release ..
-ninja
+cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -S . -B build
+cmake --build build
+
+# The resulting build will be located in build/awrit/Release
 ```

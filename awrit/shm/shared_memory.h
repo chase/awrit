@@ -13,8 +13,7 @@ namespace shm {
  * Produces a shared memory or temporary file with the contents of the provided
  * buffer.
  *
- * @returns empty if the write was a failure, otherwise returns the base64
- * encoded filename
+ * @returns empty if the write was a failure, otherwise returns the filename
  */
 std::string write(const void* buffer, size_t size);
 

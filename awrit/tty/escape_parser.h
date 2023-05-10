@@ -9,8 +9,7 @@
 #include <string>
 #include <string_view>
 
-#include "include/base/cef_callback_forward.h"
-#include "utf8_decode.h"
+#include "third_party/utf8_decode.h"
 
 namespace tty {
 
@@ -26,13 +25,13 @@ class EscapeCodeParser {
   bool Parse(std::string_view buffer);
 
  protected:
-  virtual bool HandleUTF8Codepoint(uint32_t ch) { return true; };
-  virtual bool HandleCSI(const std::string& str) { return true; };
-  virtual bool HandleOSC(const std::string& str) { return true; };
-  virtual bool HandleDCS(const std::string& str) { return true; };
-  virtual bool HandlePM(const std::string& str) { return true; };
-  virtual bool HandleSOS(const std::string& str) { return true; };
-  virtual bool HandleAPC(const std::string& str) { return true; };
+  virtual bool HandleUTF8Codepoint(uint32_t) { return true; };
+  virtual bool HandleCSI(const std::string&) { return true; };
+  virtual bool HandleOSC(const std::string&) { return true; };
+  virtual bool HandleDCS(const std::string&) { return true; };
+  virtual bool HandlePM(const std::string&) { return true; };
+  virtual bool HandleSOS(const std::string&) { return true; };
+  virtual bool HandleAPC(const std::string&) { return true; };
 
  private:
   enum class State {

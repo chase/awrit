@@ -9,12 +9,21 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(awrit VERSION 0.0.1)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+if(POLICY CMP0135)
+  cmake_policy(SET CMP0135 OLD)
+endif()
 
 set(CEF_VERSION 112.3.0+gb09c4ca+chromium-112.0.5615.165)
 # TODO: fetch the checksum from the CDN itself
 set(CEF_WIN_64_SHA ac0fb8d46e4b9a38eea18c65319010e344658b3f)
 set(CEF_LINUX_64_SHA ef1a146d2e184ce910c1bb35b66f93c3271dd789)
 set(CEF_MAC_ARM64_SHA 97e064f35f9a6c375366584738fb5d1ef7e53017)
+
+set(GTEST_VERSION v1.13.0)
+SET(GTEST_SHA bfa4b5131b6eaac06962c251742c96aab3f7aa78)
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
   set(OS_MAC 1)
@@ -65,6 +74,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(cef_minimal)
 
+# gtest v1.13.0
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/${GTEST_VERSION}.tar.gz
+  URL_HASH SHA1=${GTEST_SHA}
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
 # Use folders in the resulting project files.
 set_property(GLOBAL PROPERTY OS_FOLDERS ON)
 
@@ -74,6 +93,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CEF_ROOT}/cmake")
 
 find_package(CEF REQUIRED)
 add_subdirectory(${CEF_LIBCEF_DLL_WRAPPER_PATH} libcef_dll_wrapper)
+
+add_subdirectory(third_party)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Add the main project
 add_subdirectory(awrit)

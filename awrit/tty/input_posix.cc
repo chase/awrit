@@ -6,12 +6,11 @@
 #include <termios.h>
 #include <unistd.h>
 
-#include <cstdio>
+#include <array>
 
-#include "include/base/cef_callback.h"
-#include "tty_input_handler.h"
+#include "input.h"
 
-namespace tty {
+namespace tty::in {
 
 struct termios* get_terminal() {
   static struct termios terminal;
@@ -29,18 +28,18 @@ void set_raw(termios& t) {
   t.c_cc[VTIME] = 0;
 }
 
-void SetupTTY() {
+void Setup() {
   auto* terminal = get_terminal();
   tcgetattr(STDIN_FILENO, terminal);
   set_raw(*terminal);
   tcsetattr(STDIN_FILENO, TCSANOW, terminal);
 }
 
-void CleanupTTY() { tcsetattr(STDIN_FILENO, TCSANOW, get_terminal()); }
+void Cleanup() { tcsetattr(STDIN_FILENO, TCSANOW, get_terminal()); }
 
-bool stdin_ready() {
-  static constexpr int kTimeout_ms = 20;
-  static constexpr int kTimeout_us = kTimeout_ms * 1000;
+bool WaitFor(int timeout_ms) {
+  const int kTimeout_us = timeout_ms * 1000;
+
   static timeval tv = {0, kTimeout_us};
   fd_set fds;
   FD_ZERO(&fds);
@@ -49,23 +48,14 @@ bool stdin_ready() {
   return FD_ISSET(STDIN_FILENO, &fds);
 }
 
-void ListenForInput(scoped_refptr<base::AtomicFlag> quit,
-                    InputHandler handler) {
+std::string Read() {
   static constexpr size_t kBufferSize = 4096;
-  InputEventParser parser(handler);
-  std::array<char, kBufferSize> buffer;
+  static std::array<char, kBufferSize> buffer;
+  size_t actual_size = read(STDIN_FILENO, buffer.data(), kBufferSize);
 
-  while (!quit->IsSet()) {
-    if (!stdin_ready()) continue;
+  if (actual_size == 0) return {};
 
-    size_t actual_size = read(STDIN_FILENO, buffer.data(), kBufferSize);
-    if (actual_size) {
-      parser.Parse({buffer.data(), actual_size});
-    }
-
-    // clear for next
-    buffer.fill(0);
-  }
+  return {buffer.data(), actual_size};
 }
 
-}  // namespace tty
+}  // namespace tty::in
