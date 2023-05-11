@@ -25,3 +25,16 @@ TEST(EscapeParserTest, LeftArrow) {
   TestParser parser;
   parser.Parse(input);
 }
+
+TEST(EscapeParserTest, MouseMove) {
+  std::string input = CSI "<35;474;141M";
+  char delimiter = ';';
+  class TestParser : public tty::EscapeCodeParser {
+    bool HandleCSI(const std::string &str) override {
+      EXPECT_EQ(str, "<35;474;141M");
+      return true;
+    };
+  };
+  TestParser parser;
+  parser.Parse(input);
+}

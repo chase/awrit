@@ -4,6 +4,8 @@
 
 #include "string_utils.h"
 
+#include <charconv>
+
 namespace string {
 
 std::vector<std::string_view> split(const std::string_view& str,
@@ -21,6 +23,14 @@ std::vector<std::string_view> split(const std::string_view& str,
   tokens.push_back(str.substr(start));
 
   return tokens;
+}
+
+std::optional<int> strtoint(std::string_view str) {
+  int result;
+  const std::from_chars_result conv =
+      std::from_chars(str.begin(), str.end(), result);
+  if (conv.ec != std::errc()) return {};
+  return result;
 }
 
 }  // namespace string

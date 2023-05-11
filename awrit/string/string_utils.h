@@ -5,12 +5,14 @@
 #ifndef AWRIT_STRING_STRING_UTILS_H
 #define AWRIT_STRING_STRING_UTILS_H
 
+#include <optional>
 #include <string_view>
 #include <vector>
 
 namespace string {
 std::vector<std::string_view> split(const std::string_view& str,
                                     char delimiter);
+std::optional<int> strtoint(std::string_view str);
 }
 
 #endif  // AWRIT_STRING_STRING_UTILS_H

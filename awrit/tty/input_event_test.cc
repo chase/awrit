@@ -11,46 +11,63 @@
 #include "input.h"
 #include "kitty_keys.h"
 #include "output.h"
+#include "sgr_mouse.h"
 #include "third_party/keycodes/keyboard_codes_posix.h"
 
 std::string_view vkey_to_str(KeyboardCode::Type code);
 
+void cleanup(int signum) {
+  tty::keys::Disable();
+  tty::in::Cleanup();
+  tty::out::Cleanup();
+  if (signum != SIGUSR1) exit(signum);
+}
+
 class InputParser : public tty::EscapeCodeParser {
   bool HandleUTF8Codepoint(uint32_t a) override {
-    std::wcout << "UTF8: " << (wchar_t)a << "\r\n";
+    // std::wcout << "UTF8: " << (wchar_t)a << "\r\n";
     return true;
   };
   bool HandleOSC(const std::string&) override {
-    std::cout << "OSC" << "\r\n";
+    std::cout << "OSC"
+              << "\r\n";
     return true;
   };
   bool HandleDCS(const std::string&) override {
-    std::cout << "DCS" << "\r\n";
+    std::cout << "DCS"
+              << "\r\n";
     return true;
   };
   bool HandlePM(const std::string&) override {
-    std::cout << "PM" << "\r\n";
+    std::cout << "PM"
+              << "\r\n";
     return true;
   };
   bool HandleSOS(const std::string&) override {
-    std::cout << "sos" << "\r\n";
+    std::cout << "sos"
+              << "\r\n";
     return true;
   };
   bool HandleAPC(const std::string&) override {
-    std::cout << "apc" << "\r\n";
+    std::cout << "apc"
+              << "\r\n";
     return true;
   };
-  bool HandleCSI(const std::string& str) override {
+
+  bool HandleKeyEvent(std::string_view str) {
     auto kc = tty::keys::KeyEventFromCSI(str);
-    if (!kc) return true;
+    if (!kc) {
+      return false;
+    }
 
     if (kc->modifiers) {
       using namespace tty::keys::Modifiers;
-      std::unordered_map<tty::keys::Modifiers::Type, std::string> typeNames{
-          {Shift, "Shift"},       {Alt, "Alt"},         {Ctrl, "Ctrl"},
-          {Super, "Super"},       {Hyper, "Hyper"},     {Meta, "Meta"},
-          {CapsLock, "CapsLock"}, {NumLock, "NumLock"},
-      };
+      static const std::unordered_map<tty::keys::Modifiers::Type, std::string>
+          typeNames{
+              {Shift, "Shift"},       {Alt, "Alt"},         {Ctrl, "Ctrl"},
+              {Super, "Super"},       {Hyper, "Hyper"},     {Meta, "Meta"},
+              {CapsLock, "CapsLock"}, {NumLock, "NumLock"},
+          };
 
       for (const auto& pair : typeNames) {
         if (kc->modifiers & pair.first) std::cout << pair.second << " + ";
@@ -79,19 +96,79 @@ class InputParser : public tty::EscapeCodeParser {
     std::cout << "\r\n";
 
     if (kc->modifiers & tty::keys::Modifiers::Ctrl && kc->key == 'c') {
-      exit(0);
+      cleanup(0);
     }
 
     return true;
   }
-};
 
-void cleanup(int signum) {
-  tty::keys::Disable();
-  tty::in::Cleanup();
-  tty::out::Cleanup();
-  if (signum != SIGUSR1) exit(signum);
-}
+  bool HandleMouseEvent(std::string_view str) {
+    auto mc = tty::sgr_mouse::MouseEventFromCSI(str);
+    if (!mc) {
+      return false;
+    }
+
+    std::cout << "(" << mc->x << ", " << mc->y << ") ";
+
+    if (mc->modifiers) {
+      using namespace tty::mouse::Modifier;
+      static const std::unordered_map<int, std::string> typeNames{
+          {Shift, "Shift"},
+          {Alt, "Alt"},
+          {Ctrl, "Ctrl"},
+      };
+
+      for (const auto& pair : typeNames) {
+        if (mc->modifiers & pair.first) std::cout << pair.second << " + ";
+      }
+    }
+
+    {
+      using namespace tty::mouse::Event;
+      static const std::unordered_map<int, std::string> typeNames{
+          {Press, "Press"},
+          {Release, "Release"},
+          {Move, "Move"},
+      };
+
+      for (const auto& pair : typeNames) {
+        if (mc->type & pair.first) std::cout << pair.second << " + ";
+      }
+    }
+
+    if (mc->buttons) {
+      using namespace tty::mouse::Button;
+      static const std::unordered_map<int, std::string> typeNames{
+          {Left, "Left"},
+          {Middle, "Middle"},
+          {Right, "Right"},
+          {Fourth, "Fourth"},
+          {Fifth, "Fifth"},
+          {Sixth, "Sixth"},
+          {Seventh, "Seventh"},
+          {WheelUp, "WheelUp"},
+          {WheelDown, "WheelDown"},
+          {WheelLeft, "WheelLeft"},
+          {WheelRight, "WheelRight"},
+      };
+
+      for (const auto& pair : typeNames) {
+        if (mc->buttons & pair.first) std::cout << pair.second << " ";
+      }
+    }
+
+    std::cout << "\r\n";
+
+    return true;
+  }
+
+  bool HandleCSI(const std::string& str) override {
+    if (HandleKeyEvent(str)) return true;
+    if (HandleMouseEvent(str)) return true;
+
+    return true;
+  }
+};
 
 int main() {
   signal(SIGINT, cleanup);
@@ -102,6 +179,7 @@ int main() {
   tty::in::Setup();
   tty::out::Setup();
   tty::keys::Enable();
+  tty::sgr_mouse::Enable();
   bool quit = false;
   InputParser parser;
 
@@ -110,8 +188,8 @@ int main() {
   std::wcout.imbue(std::locale(""));
 
   while (!quit) {
-    if (!tty::in::WaitForReady(20)) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    if (!tty::in::WaitForReady(10)) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
       continue;
     }
     std::string output = tty::in::Read();

@@ -19,6 +19,9 @@ set(TTY_SRCS
   kitty_keys.cc
   output.h
   output.cc
+  mouse.h
+  sgr_mouse.h
+  sgr_mouse.cc
   )
 
 set(TTY_WIN_SRCS
