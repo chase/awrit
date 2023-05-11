@@ -43,10 +43,10 @@ struct KeyboardInputEvent : public InputEvent {
   static const InputType kInputType = InputType::Keyboard;
   const uint32_t key;
   const int modifiers;
-  const keys::Event event;
+  const keys::Event::Type event;
 
   explicit KeyboardInputEvent(uint32_t key_, int modifiers_,
-                              keys::Event event_)
+                              keys::Event::Type event_)
       : InputEvent(kInputType),
         key(key_),
         modifiers(modifiers_),

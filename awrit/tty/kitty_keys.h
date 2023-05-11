@@ -5,38 +5,61 @@
 #ifndef AWRIT_KITTY_KEYS_H
 #define AWRIT_KITTY_KEYS_H
 
-#include "enum_class.h"
+#include <cstdint>
+#include <optional>
+#include <string_view>
 
 // see https://sw.kovidgoyal.net/kitty/keyboard-protocol/
 namespace tty::keys {
 
-enum class Modifiers : int {
-  shift = 1,
-  alt = 2,
-  ctrl = 4,
-  super = 8,
-  hyper = 16,
-  meta = 32,
-  caps_lock = 64,
-  num_lock = 128,
+namespace Modifiers {
+enum Type : int {
+  Shift = 1 << 0,
+  Alt = 1 << 1,
+  Ctrl = 1 << 2,
+  Super = 1 << 3,
+  Hyper = 1 << 4,
+  Meta = 1 << 5,
+  CapsLock = 1 << 6,
+  NumLock = 1 << 7,
+
+  None = 0
 };
 
-enum class Event : int {
-  key_down = 1,
-  key_repeat = 2,
-  key_up = 3,
-};
+}  // namespace Modifiers
 
-enum class Flags : int {
-  disambiguate_escape_codes = 1,
-  report_event_types = 2,
-  report_alternate_keys = 4,
-  report_all_keys_as_escape_codes = 8,
-  report_associated_text = 16
+namespace Event {
+enum Type : int {
+  Down = 1,
+  Repeat = 2,
+  Up = 3,
+};
+}
+
+namespace Flags {
+enum Type : int {
+  DisambiguateEscapeCodes = 1,
+  ReportEventTypes = 2,
+  ReportAlternateKeys = 4,
+  ReportAllKeysAsEscapeCodes = 8,
+  ReportAssociatedText = 16,
+  None = 0
+};
+}
+
+struct KeyEvent {
+  Event::Type type = Event::Down;
+  uint32_t windows_key_code = 0;
+  uint32_t key = 0;
+  uint32_t shifted_key = 0;
+  uint32_t alternate_key = 0;
+  int modifiers = 0;
 };
 
 void Enable();
 void Disable();
+
+std::optional<KeyEvent> KeyEventFromCSI(std::string_view csi) noexcept;
 
 }  // namespace tty::keys
 

@@ -81,6 +81,8 @@ endif()
 set(AWRIT_UNIT_TEST_SRCS
   shm/shared_memory_unittest.cc
   string/string_utils_unittest.cc
+  tty/escape_parser_unittest.cc
+  tty/kitty_keys_unittest.cc
   )
 
 source_group(awrit_unit_tests FILES ${AWRIT_UNIT_TEST_SRCS})
@@ -92,11 +94,9 @@ include(GoogleTest)
 gtest_discover_tests(awrit_unit_tests)
 
 add_custom_target(test
-  COMMAND ${CEF_TARGET_OUT_DIR}/awrit_unit_tests
-  DEPENDS ${CEF_TARGET_OUT_DIR}/awrit_unit_tests
+  COMMAND "${CEF_TARGET_OUT_DIR}/awrit_unit_tests"
+  DEPENDS "${CEF_TARGET_OUT_DIR}/awrit_unit_tests"
 )
 
-add_custom_target(run
-  COMMAND ${CEF_TARGET}
-  DEPENDS ${CEF_TARGET}
-)
+add_executable(input_event_test tty/input_event_test.cc)
+target_link_libraries(input_event_test PRIVATE tty)

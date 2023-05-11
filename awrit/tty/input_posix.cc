@@ -37,7 +37,7 @@ void Setup() {
 
 void Cleanup() { tcsetattr(STDIN_FILENO, TCSANOW, get_terminal()); }
 
-bool WaitFor(int timeout_ms) {
+bool WaitForReady(int timeout_ms) {
   const int kTimeout_us = timeout_ms * 1000;
 
   static timeval tv = {0, kTimeout_us};

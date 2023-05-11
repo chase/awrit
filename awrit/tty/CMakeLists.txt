@@ -36,7 +36,7 @@ endif()
 
 source_group(tty ${TTY_SRCS})
 add_library(tty STATIC ${TTY_SRCS})
-target_link_libraries(tty PRIVATE utf8_decode modp_b64)
+target_link_libraries(tty PRIVATE utf8_decode modp_b64 string)
 
 target_include_directories(tty PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

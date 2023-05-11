@@ -7,6 +7,15 @@
 
 using namespace string;
 
+TEST(SplitTest, NoView) {
+  std::string_view input{};
+  std::vector<std::string_view> expected_output = {};
+  char delimiter = ';';
+
+  auto result = split(input, delimiter);
+  ASSERT_EQ(expected_output, result);
+}
+
 TEST(SplitTest, EmptyString) {
   std::string_view input = "";
   std::vector<std::string_view> expected_output = {};
