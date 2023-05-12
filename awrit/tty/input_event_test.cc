@@ -192,8 +192,7 @@ int main() {
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
       continue;
     }
-    std::string output = tty::in::Read();
-    parser.Parse(output);
+    parser.Parse(tty::in::Read());
   }
 }
 

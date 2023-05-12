@@ -10,15 +10,20 @@
 #include "shm/shared_memory.h"
 #include "tty/escape_codes.h"
 #include "tty/input.h"
+#include "tty/kitty_keys.h"
 #include "tty/output.h"
+#include "tty/sgr_mouse.h"
 
 void Initialize() {
   tty::out::Setup();
-  // tty::in::Setup();
+  tty::in::Setup();
+  tty::keys::Enable();
+  tty::sgr_mouse::Enable();
 }
 
 void Restore() {
-  // tty::in::Cleanup();
+  tty::keys::Disable();
+  tty::in::Cleanup();
   tty::out::Cleanup();
 }
 

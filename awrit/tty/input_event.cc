@@ -3,12 +3,21 @@
 // in the LICENSE file.
 
 #include "input_event.h"
+#include "sgr_mouse.h"
 
 namespace tty {
 
-// TODO: actually convert to input events
 bool InputEventParser::HandleCSI(const std::string& str) {
-  (void)str;
+  auto kc = tty::keys::KeyEventFromCSI(str);
+  if (kc) {
+    HandleKey(*kc);
+    return true;
+  }
+  auto mc = tty::sgr_mouse::MouseEventFromCSI(str);
+  if (mc) {
+    HandleMouse(*mc);
+    return true;
+  }
   return true;
 }
 

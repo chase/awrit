@@ -31,8 +31,9 @@ void set_raw(termios& t) {
 void Setup() {
   auto* terminal = get_terminal();
   tcgetattr(STDIN_FILENO, terminal);
-  set_raw(*terminal);
-  tcsetattr(STDIN_FILENO, TCSANOW, terminal);
+  struct termios new_terminal = *terminal;
+  set_raw(new_terminal);
+  tcsetattr(STDIN_FILENO, TCSANOW, &new_terminal);
 }
 
 void Cleanup() { tcsetattr(STDIN_FILENO, TCSANOW, get_terminal()); }

@@ -23,6 +23,8 @@ set(AWRIT_INTERNAL_LIBS
 
 set(AWRIT_SRCS
   main.cc
+  input_event_handler.h
+  input_event_handler.cc
   awrit.h
   awrit.cc
   tui.h

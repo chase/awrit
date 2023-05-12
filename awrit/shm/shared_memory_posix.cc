@@ -15,10 +15,13 @@
 namespace shm {
 
 std::string write(const void* buffer, size_t size) {
-  std::mt19937 engine(std::random_device{}());
-  std::uniform_int_distribution<unsigned int> dist(0);
+  static std::string name;
+  if (name.empty()) {
+    std::mt19937 engine(std::random_device{}());
+    std::uniform_int_distribution<unsigned int> dist(1);
+    name = "/dev/shm/awrit-" + std::to_string(dist(engine));
+  }
 
-  std::string name = "/dev/shm/awrit-" + std::to_string(dist(engine));
   int fd_ = open(name.c_str(), O_RDWR | O_CREAT, 0600);
   if (fd_ < 0) {
     fprintf(stderr, "NO FD %s\n", name.c_str());

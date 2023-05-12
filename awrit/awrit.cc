@@ -3,20 +3,22 @@
 // in the LICENSE file.
 
 #include "awrit.h"
+#include <thread>
 
 #include "include/base/cef_atomic_flag.h"
+#include "include/base/cef_bind.h"
 #include "include/base/cef_callback.h"
 #include "include/base/cef_ref_counted.h"
 #include "include/base/cef_scoped_refptr.h"
 #include "include/cef_browser.h"
 #include "include/cef_command_line.h"
 #include "include/cef_parser.h"
-#include "include/internal/cef_linux.h"
-#include "include/internal/cef_ptr.h"
 #include "include/views/cef_browser_view.h"
 #include "include/views/cef_window.h"
 #include "include/wrapper/cef_closure_task.h"
 #include "include/wrapper/cef_helpers.h"
+#include "tty/input.h"
+#include "input_event_handler.h"
 #include "tty/output.h"
 #include "tui.h"
 
@@ -31,9 +33,16 @@ std::string GetDataURI(const std::string& data, const std::string& mime_type) {
 
 }  // namespace
 
-AwritClient::AwritClient() : is_closing_(false) {
+AwritClient::AwritClient()
+    : is_closing_(false),
+      quitting_(
+          base::MakeRefCounted<base::RefCountedData<base::AtomicFlag>>()) {
   DCHECK(!g_awrit_client);
   g_awrit_client = this;
+  input_thread_ = CefThread::CreateThread("input", TP_DISPLAY, ML_TYPE_UI, true,
+                                          COM_INIT_MODE_NONE);
+  input_thread_->GetTaskRunner()->PostTask(CefCreateClosureTask(
+      base::BindRepeating(&AwritClient::ListenToInput, this, quitting_)));
 }
 
 AwritClient::~AwritClient() { g_awrit_client = nullptr; }
@@ -51,6 +60,7 @@ void AwritClient::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
 
   // Add to the list of existing browsers.
   browser_list_.push_back(browser);
+  active_ = browser;
 }
 
 bool AwritClient::DoClose(CefRefPtr<CefBrowser> browser) {
@@ -58,6 +68,7 @@ bool AwritClient::DoClose(CefRefPtr<CefBrowser> browser) {
 
   if (browser_list_.size() == 1) {
     is_closing_ = true;
+    quitting_->data.Set();
   }
 
   return false;
@@ -71,6 +82,9 @@ void AwritClient::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
       browser_list_.erase(it);
       break;
     }
+  }
+  if (!browser_list_.empty() && active_->IsSame(browser)) {
+    active_ = browser_list_.back();
   }
 
   if (browser_list_.empty()) {
@@ -131,15 +145,26 @@ void AwritClient::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type,
   Paint(dirtyRects, buffer, width, height);
 }
 
-Awrit::Awrit()
-    : quitting_(
-          base::MakeRefCounted<base::RefCountedData<base::AtomicFlag>>()) {}
+void AwritClient::ListenToInput(CefRefPtr<base::RefCountedData<base::AtomicFlag>> quitting)
+{
+  InputEventParserImpl parser;
+
+  while (!quitting->data.IsSet()) {
+    if (!tty::in::WaitForReady(10)) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      continue;
+    }
+    parser.Parse(tty::in::Read());
+  }
+}
+
+Awrit::Awrit() {}
 
 void Awrit::OnContextInitialized() {
   CEF_REQUIRE_UI_THREAD();
   CefRefPtr<AwritClient> client(new AwritClient());
   CefBrowserSettings browser_settings;
-  browser_settings.windowless_frame_rate = 60;
+  browser_settings.windowless_frame_rate = 40;
 
   CefRefPtr<CefCommandLine> command_line =
       CefCommandLine::GetGlobalCommandLine();
