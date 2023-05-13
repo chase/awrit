@@ -9,7 +9,7 @@
 static NSAutoreleasePool* g_autopool = nil;
 
 // Provide the CefAppProtocol implementation required by CEF.
-@interface ShellApplication <CefAppProtocol> {
+@interface ShellApplication : NSApplication <CefAppProtocol> {
  @private
   BOOL handlingSendEvent_;
 }
@@ -41,4 +41,8 @@ void MacInit() {
 void MacCleanup() {
   // Release the AutoRelease pool.
   [g_autopool release];
+}
+
+float MacGetScale() {
+  return [[NSScreen mainScreen] backingScaleFactor];
 }

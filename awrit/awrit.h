@@ -55,6 +55,7 @@ class AwritClient : public CefClient,
   void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type,
                const RectList& dirtyRects, const void* buffer, int width,
                int height) override;
+  bool GetScreenInfo(CefRefPtr<CefBrowser> browser, CefScreenInfo& screen_info) override;
 
   void CloseAllBrowsers(bool force_close);
 
@@ -82,6 +83,7 @@ class Awrit : public CefApp, public CefBrowserProcessHandler {
 
   void OnContextInitialized() override;
   CefRefPtr<CefClient> GetDefaultClient() override;
+  void OnBeforeCommandLineProcessing(const CefString &process_type, CefRefPtr<CefCommandLine> command_line) override;
 
  private:
   IMPLEMENT_REFCOUNTING(Awrit);

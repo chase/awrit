@@ -32,8 +32,11 @@ void PlaceCursor(Point point = {0, 0});
 void Setup();
 void Cleanup();
 
-void PaintBitmapFile(const std::string_view filename, const Size size,
-                     const Point point = {0, 0});
+enum NameType : char { shm = 's', file = 't' };
+
+void PaintBitmap(const std::string_view name, const Size size,
+                 const Point point = {0, 0},
+                 const NameType type = NameType::shm);
 
 // VT100/DEC Modes
 enum Mode : int {
@@ -55,7 +58,6 @@ enum Mode : int {
 };
 
 void SetModes(const std::vector<Mode>& modes, bool enabled);
-
 
 }  // namespace tty::out
 

@@ -3,6 +3,7 @@
 // in the LICENSE file.
 
 #include "awrit.h"
+
 #include <thread>
 
 #include "include/base/cef_atomic_flag.h"
@@ -17,8 +18,8 @@
 #include "include/views/cef_window.h"
 #include "include/wrapper/cef_closure_task.h"
 #include "include/wrapper/cef_helpers.h"
-#include "tty/input.h"
 #include "input_event_handler.h"
+#include "tty/input.h"
 #include "tty/output.h"
 #include "tui.h"
 
@@ -134,6 +135,12 @@ void AwritClient::CloseAllBrowsers(bool force_close) {
 void AwritClient::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect) {
   auto x = WindowSize();
   rect.Set(0, 0, x.width, x.height);
+#if defined(OS_MAC)
+  extern float MacGetScale();
+  float scale = MacGetScale();
+  rect.height = x.height / scale;
+  rect.width = x.width / scale;
+#endif
 }
 
 void AwritClient::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type,
@@ -145,8 +152,8 @@ void AwritClient::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type,
   Paint(dirtyRects, buffer, width, height);
 }
 
-void AwritClient::ListenToInput(CefRefPtr<base::RefCountedData<base::AtomicFlag>> quitting)
-{
+void AwritClient::ListenToInput(
+    CefRefPtr<base::RefCountedData<base::AtomicFlag>> quitting) {
   InputEventParserImpl parser;
 
   while (!quitting->data.IsSet()) {
@@ -183,4 +190,32 @@ void Awrit::OnContextInitialized() {
 
 CefRefPtr<CefClient> Awrit::GetDefaultClient() {
   return AwritClient::GetInstance();
+}
+
+void Awrit::OnBeforeCommandLineProcessing(
+    const CefString& process_type, CefRefPtr<CefCommandLine> command_line) {
+#if defined(OS_MAC)
+  // don't prompt for user's password
+  command_line->AppendSwitch("use-mock-keychain");
+#endif
+}
+
+bool AwritClient::GetScreenInfo(CefRefPtr<CefBrowser> browser,
+                                CefScreenInfo& screen_info) {
+#if defined(OS_MAC)
+  CEF_REQUIRE_UI_THREAD();
+
+  CefRect view_rect;
+  GetViewRect(browser, view_rect);
+
+  extern float MacGetScale();
+  screen_info.device_scale_factor = MacGetScale();
+
+  screen_info.rect = view_rect;
+  screen_info.available_rect = view_rect;
+
+  return true;
+#else
+  return false;
+#endif
 }

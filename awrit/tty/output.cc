@@ -27,17 +27,16 @@ Size WindowSize() {
 
 void PlaceCursor(Point point) { printf(CSI "%d;%dH", point.x, point.y); }
 
-void PaintBitmapFile(const std::string_view filename, const Size size,
-                     const Point point) {
-  size_t encoded_len = modp_b64_encode_data_len(filename.size());
+void PaintBitmap(const std::string_view name, const Size size,
+                 const Point point, const NameType type) {
+  size_t encoded_len = modp_b64_encode_data_len(name.size());
   std::string encoded;
   encoded.resize(encoded_len);
-  encoded_len =
-      modp_b64_encode_data(encoded.data(), filename.data(), filename.size());
+  encoded_len = modp_b64_encode_data(encoded.data(), name.data(), name.size());
 
   PlaceCursor({0, 0});
-  fprintf(stdout, ESC "_Gf=32,a=T,s=%d,v=%d,t=t,x=%d,y=%d,C=1;", size.width,
-          size.height, point.x, point.y);
+  fprintf(stdout, ESC "_Gf=32,a=T,s=%d,v=%d,t=%c,x=%d,y=%d,C=1;", size.width,
+          size.height, type, point.x, point.y);
   fwrite(encoded.data(), encoded.length(), 1, stdout);
   fprintf(stdout, ESC "\\");
   fflush(stdout);
@@ -84,6 +83,7 @@ void Setup() {
 }
 
 void Cleanup() {
+  fputs(CLEAR_SCREEN, stdout);
   SetModes({alternate_screen}, false);
   fputs(RESTORE_PRIVATE_MODE_VALUES RESTORE_CURSOR RESTORE_COLORS, stdout);
   fflush(stdout);

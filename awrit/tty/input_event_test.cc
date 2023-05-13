@@ -6,6 +6,7 @@
 #include <iostream>
 #include <thread>
 #include <unordered_map>
+#include <clocale>
 
 #include "escape_parser.h"
 #include "input.h"

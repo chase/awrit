@@ -9,7 +9,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(awrit VERSION 0.0.1)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(POLICY CMP0135)
@@ -104,4 +104,9 @@ add_subdirectory(awrit)
 # Display configuration settings.
 PRINT_CEF_CONFIG()
 
+cmake_language(DEFER DIRECTORY "${CMAKE_BINARY_DIR}" CALL _copy_compile_commands())
+function(_copy_compile_commands)
+if (EXISTS "${CMAKE_BINARY_DIR}/compile_commands.json")
 configure_file("${CMAKE_BINARY_DIR}/compile_commands.json" "${CMAKE_SOURCE_DIR}/compile_commands.json")
+endif()
+endfunction(_copy_compile_commands)
