@@ -16,11 +16,11 @@ if(POLICY CMP0135)
   cmake_policy(SET CMP0135 OLD)
 endif()
 
-set(CEF_VERSION 112.3.0+gb09c4ca+chromium-112.0.5615.165)
+set(CEF_VERSION 113.1.4+g327635f+chromium-113.0.5672.63)
 # TODO: fetch the checksum from the CDN itself
-set(CEF_WIN_64_SHA ac0fb8d46e4b9a38eea18c65319010e344658b3f)
-set(CEF_LINUX_64_SHA ef1a146d2e184ce910c1bb35b66f93c3271dd789)
-set(CEF_MAC_ARM64_SHA 97e064f35f9a6c375366584738fb5d1ef7e53017)
+set(CEF_WIN_64_SHA 7717bbae3043ce99b761764e7754430b079dea7a)
+set(CEF_LINUX_64_SHA fc51b4b80cdf961947b386407fe411a32cc043fa)
+set(CEF_MAC_ARM64_SHA a537fea97d388131a0718b3b4622b02260bcd9ae)
 
 set(GTEST_VERSION v1.13.0)
 SET(GTEST_SHA bfa4b5131b6eaac06962c251742c96aab3f7aa78)
@@ -66,6 +66,7 @@ endif()
 include(FetchContent)
 # Download CEF if necessary
 Set(FETCHCONTENT_QUIET FALSE)
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
 FetchContent_Declare(
   cef_minimal
   URL https://cef-builds.spotifycdn.com/cef_binary_${CEF_VERSION}_${CEF_PLATFORM}_minimal.tar.bz2
@@ -73,6 +74,14 @@ FetchContent_Declare(
   SOURCE_SUBDIR cmake
 )
 FetchContent_MakeAvailable(cef_minimal)
+else()
+FetchContent_Declare(
+  cef_standard
+  URL https://cef-builds.spotifycdn.com/cef_binary_${CEF_VERSION}_${CEF_PLATFORM}.tar.bz2
+  SOURCE_SUBDIR cmake
+)
+FetchContent_MakeAvailable(cef_standard)
+endif()
 
 # gtest v1.13.0
 FetchContent_Declare(
@@ -88,7 +97,11 @@ FetchContent_MakeAvailable(googletest)
 set_property(GLOBAL PROPERTY OS_FOLDERS ON)
 
 # Setup CEF
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
 set(CEF_ROOT "${cef_minimal_SOURCE_DIR}")
+else()
+set(CEF_ROOT "${cef_standard_SOURCE_DIR}")
+endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CEF_ROOT}/cmake")
 
 find_package(CEF REQUIRED)

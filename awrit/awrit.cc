@@ -75,6 +75,7 @@ bool AwritClient::DoClose(CefRefPtr<CefBrowser> browser) {
 
 void AwritClient::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
+  if (browser_list_.empty()) return;
 
   for (auto it = browser_list_.begin(); it != browser_list_.end(); ++it) {
     if ((*it)->IsSame(browser)) {
@@ -177,7 +178,7 @@ void Awrit::OnContextInitialized() {
 
   std::string url = command_line->GetSwitchValue("url");
   if (url.empty()) {
-    url = "https://devdocs.io/cpp/header/coroutine";
+    url = "https://github.com/chase/awrit";
   }
 
   CefWindowInfo window_info;

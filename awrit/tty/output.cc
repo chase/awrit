@@ -57,6 +57,7 @@ void Setup() {
         stdout);
   // clang-format off
   SetModes({
+    text_cursor,
     cursor_key_to_app,
     reverse_video,
     bracketed_paste,
@@ -73,7 +74,6 @@ void Setup() {
   SetModes({
     auto_repeat,
     auto_wrap,
-    text_cursor,
     alternate_screen,
   }, true);
   // clang-format on

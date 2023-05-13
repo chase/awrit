@@ -8,6 +8,9 @@
 #include <unordered_map>
 
 #include "awrit.h"
+#include "include/base/cef_bind.h"
+#include "include/base/cef_callback.h"
+#include "include/wrapper/cef_closure_task.h"
 #include "output.h"
 #include "third_party/keycodes/keyboard_codes_posix.h"
 #include "tty/input_event.h"
@@ -17,8 +20,12 @@
 void InputEventParserImpl::HandleKey(const tty::keys::KeyEvent& key_event) {
   using namespace tty::keys;
 
-  if (key_event.modifiers == Modifiers::Ctrl && key_event.key == 'c') {
-    AwritClient::GetInstance()->CloseAllBrowsers(true);
+  if (key_event.modifiers == Modifiers::Ctrl && key_event.key == 'c' &&
+      key_event.type == tty::keys::Event::Up) {
+    CefPostTask(
+        TID_UI,
+        base::BindOnce(&AwritClient::CloseAllBrowsers,
+                       AwritClient::GetInstance(), true));
     return;
   }
 
@@ -26,18 +33,20 @@ void InputEventParserImpl::HandleKey(const tty::keys::KeyEvent& key_event) {
   if (!active) return;
 
 #ifdef OS_MAC
-  // Since there is no UI and consequently no menu on macOS, the Cmd+A shortcut doesn't work as one might expect without this hack
-if (key_event.modifiers == Modifiers::Super && key_event.key == 'a') {
-  static const std::string kSelectAllInsideInput = R"(
+  // Since there is no UI and consequently no menu on macOS, the Cmd+A shortcut
+  // doesn't work as one might expect without this hack
+  if (key_event.modifiers == Modifiers::Super && key_event.key == 'a') {
+    static const std::string kSelectAllInsideInput = R"(
 if(['textarea', 'input'].includes(document.activeElement.tagName.toLowerCase())) { document.activeElement.select(); }
   )";
-  active->GetMainFrame()->ExecuteJavaScript(kSelectAllInsideInput, active->GetMainFrame()->GetURL(), 0);
-  return;
-}
+    active->GetMainFrame()->ExecuteJavaScript(
+        kSelectAllInsideInput, active->GetMainFrame()->GetURL(), 0);
+    return;
+  }
 #endif
 
   CefKeyEvent event;
-  event.type = key_event.type == Event::Up ? KEYEVENT_KEYUP : KEYEVENT_RAWKEYDOWN;
+  event.type = key_event.type == Event::Up ? KEYEVENT_KEYUP : KEYEVENT_KEYDOWN;
 
   if (key_event.type == Event::Repeat) event.modifiers |= EVENTFLAG_IS_REPEAT;
 
@@ -120,6 +129,7 @@ if(['textarea', 'input'].includes(document.activeElement.tagName.toLowerCase()))
     {KeyboardCode::VKEY_LMENU, 0x0040},
     {KeyboardCode::VKEY_RWIN, 0x0086},
     {KeyboardCode::VKEY_LWIN, 0x0087},
+    {KeyboardCode::VKEY_RETURN, 0x24},
 #elif defined(OS_MAC)
     {KeyboardCode::VKEY_RCONTROL, 0x003E},
     {KeyboardCode::VKEY_LCONTROL, 0x003B},

@@ -9,8 +9,8 @@
 
 #include "include/base/cef_atomic_flag.h"
 #include "include/cef_app.h"
-#include "include/cef_thread.h"
 #include "include/cef_render_handler.h"
+#include "include/cef_thread.h"
 
 class AwritClient : public CefClient,
                     public CefDisplayHandler,
@@ -55,7 +55,8 @@ class AwritClient : public CefClient,
   void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type,
                const RectList& dirtyRects, const void* buffer, int width,
                int height) override;
-  bool GetScreenInfo(CefRefPtr<CefBrowser> browser, CefScreenInfo& screen_info) override;
+  bool GetScreenInfo(CefRefPtr<CefBrowser> browser,
+                     CefScreenInfo& screen_info) override;
 
   void CloseAllBrowsers(bool force_close);
 
@@ -88,7 +89,9 @@ class Awrit : public CefApp, public CefBrowserProcessHandler {
 
   void OnContextInitialized() override;
   CefRefPtr<CefClient> GetDefaultClient() override;
-  void OnBeforeCommandLineProcessing(const CefString &process_type, CefRefPtr<CefCommandLine> command_line) override;
+  void OnBeforeCommandLineProcessing(
+      const CefString& process_type,
+      CefRefPtr<CefCommandLine> command_line) override;
 
  private:
   IMPLEMENT_REFCOUNTING(Awrit);
