@@ -34,16 +34,15 @@ std::string GetDataURI(const std::string& data, const std::string& mime_type) {
 
 }  // namespace
 
-AwritClient::AwritClient()
-    : is_closing_(false),
-      quitting_(
-          base::MakeRefCounted<base::RefCountedData<base::AtomicFlag>>()) {
+AwritClient::AwritClient() : is_closing_(false), quitting_() {
   DCHECK(!g_awrit_client);
   g_awrit_client = this;
+  quitting_ = base::MakeRefCounted<base::RefCountedData<base::AtomicFlag>>();
   input_thread_ = CefThread::CreateThread("input", TP_DISPLAY, ML_TYPE_UI, true,
                                           COM_INIT_MODE_NONE);
-  input_thread_->GetTaskRunner()->PostTask(CefCreateClosureTask(
-      base::BindRepeating(&AwritClient::ListenToInput, this, quitting_)));
+  input_thread_->GetTaskRunner()->PostTask(
+      CefCreateClosureTask(base::BindRepeating(
+          &AwritClient::ListenToInput, base::Unretained(this), quitting_)));
 }
 
 AwritClient::~AwritClient() { g_awrit_client = nullptr; }
@@ -61,7 +60,6 @@ void AwritClient::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
 
   // Add to the list of existing browsers.
   browser_list_.push_back(browser);
-  active_ = browser;
 }
 
 bool AwritClient::DoClose(CefRefPtr<CefBrowser> browser) {
@@ -69,7 +67,7 @@ bool AwritClient::DoClose(CefRefPtr<CefBrowser> browser) {
 
   if (browser_list_.size() == 1) {
     is_closing_ = true;
-    quitting_->data.Set();
+    if (quitting_) quitting_->data.Set();
   }
 
   return false;
@@ -84,13 +82,11 @@ void AwritClient::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
       break;
     }
   }
-  if (!browser_list_.empty() && active_->IsSame(browser)) {
-    active_ = browser_list_.back();
-  }
 
   if (browser_list_.empty()) {
     // All browser windows have closed. Quit the application message loop.
     CefQuitMessageLoop();
+    return;
   }
 }
 
@@ -128,6 +124,9 @@ void AwritClient::CloseAllBrowsers(bool force_close) {
   }
 
   for (auto it = browser_list_.begin(); it != browser_list_.end(); ++it) {
+    if (quitting_ && quitting_->data.IsSet()) return;
+
+    if (!(*it)->HasAtLeastOneRef()) continue;
     (*it)->GetHost()->CloseBrowser(force_close);
   }
 }

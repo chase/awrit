@@ -37,7 +37,7 @@ void Paint(const std::vector<CefRect>& dirtyRects, const void* buffer,
   size_t buffer_size = width * height * sizeof(uint32_t);
 
   // buffer is BGRA but RGBA is needed by tty::out::PaintBitmap
-  static auto bgra_img = CefImage::CreateImage();
+  auto bgra_img = CefImage::CreateImage();
   static bool first = true;
   static std::string name;
 

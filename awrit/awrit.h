@@ -60,13 +60,18 @@ class AwritClient : public CefClient,
   void CloseAllBrowsers(bool force_close);
 
   bool IsClosing() const { return is_closing_; }
-  CefRefPtr<CefBrowser> Active() { return active_; }
-  void ListenToInput(CefRefPtr<base::RefCountedData<base::AtomicFlag>> quitting);
+  CefRefPtr<CefBrowser> Active() {
+    if (browser_list_.empty())
+      return {};
+    else
+      return browser_list_.back();
+  }
+  void ListenToInput(
+      CefRefPtr<base::RefCountedData<base::AtomicFlag>> quitting);
 
  private:
   typedef std::list<CefRefPtr<CefBrowser>> BrowserList;
   BrowserList browser_list_;
-  CefRefPtr<CefBrowser> active_;
   bool is_closing_;
   CefRefPtr<CefThread> input_thread_;
   CefRefPtr<base::RefCountedData<base::AtomicFlag>> quitting_;
