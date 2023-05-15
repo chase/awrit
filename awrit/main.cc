@@ -5,8 +5,8 @@
 #include "awrit.h"
 #include "include/base/cef_logging.h"
 #include "include/cef_command_line.h"
-#include "include/internal/cef_types.h"
 #include "include/wrapper/cef_helpers.h"
+#include "third_party/platform_folders.h"
 #include "tui.h"
 
 #if defined(OS_MAC)
@@ -57,6 +57,11 @@ int main(int argc, char* argv[]) {
 #endif
 
   settings.log_severity = cef_log_severity_t::LOGSEVERITY_FATAL;
+  settings.persist_user_preferences = true;
+  auto cacheDir = folders::getCacheDir();
+  if (!cacheDir.empty()) {
+    CefString(&settings.cache_path).FromString(cacheDir + "/awrit");
+  }
   settings.windowless_rendering_enabled = true;
 
 #if !defined(CEF_USE_SANDBOX)

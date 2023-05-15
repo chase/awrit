@@ -13,3 +13,4 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_library(modp_b64 STATIC modp_b64.h modp_b64.cc)
 add_library(utf8_decode STATIC utf8_decode.h utf8_decode.cc)
+add_library(platform_folders STATIC platform_folders.h platform_folders.cc)
