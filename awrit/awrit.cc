@@ -176,7 +176,18 @@ void Awrit::OnContextInitialized() {
   CefRefPtr<CefCommandLine> command_line =
       CefCommandLine::GetGlobalCommandLine();
 
-  std::string url = command_line->GetSwitchValue("url");
+  std::vector<CefString> args;
+  command_line->GetArguments(args);
+
+  std::string url;
+  for (auto& arg : args) {
+    std::string str_arg = arg.ToString();
+    if (!str_arg.starts_with('-')) {
+      url = std::move(str_arg);
+      break;
+    }
+  }
+
   if (url.empty()) {
     url = "https://github.com/chase/awrit";
   }
