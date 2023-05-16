@@ -111,6 +111,9 @@ add_subdirectory(third_party)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+list(REMOVE_ITEM CEF_CXX_COMPILER_FLAGS -std=c++17)
+list(APPEND CEF_CXX_COMPILER_FLAGS -std=c++20)
+
 # Add the main project
 add_subdirectory(awrit)
 

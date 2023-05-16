@@ -122,7 +122,7 @@ if(OS_MAC)
   add_executable(${CEF_TARGET} MACOSX_BUNDLE ${CEF_RESOURCES_SRCS} ${AWRIT_SRCS})
   SET_EXECUTABLE_TARGET_PROPERTIES(${CEF_TARGET})
   add_dependencies(${CEF_TARGET} libcef_dll_wrapper)
-  target_link_libraries(${CEF_TARGET} libcef_dll_wrapper ${CEF_STANDARD_LIBS} ${AWRIT_INTERNAL_LIBS})
+  target_link_libraries(${CEF_TARGET} libcef_dll_wrapper ${CEF_STANDARD_LIBS} ${AWRIT_INTERNAL_LIBS} platform_folders)
   set_target_properties(${CEF_TARGET} PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/resources/mac/Info.plist
     )
