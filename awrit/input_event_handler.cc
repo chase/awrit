@@ -318,7 +318,7 @@ void InputEventParserImpl::HandleMouse(
   event.y = mouse_event.y;
 #endif
 
-  if (mouse_event.modifiers & Modifier::Motion) {
+  if (mouse_event.type == Event::Type::Move) {
     active->GetHost()->SendMouseMoveEvent(event, false);
   } else if (mouse_event.buttons &
              (Button::Left | Button::Middle | Button::Right)) {

@@ -56,6 +56,7 @@ std::optional<mouse::MouseEvent> MouseEventFromCSI(
     result.type = Event::Release;
   } else if (*desc & Motion) {
     result.type = Event::Move;
+    result.modifiers |= Motion;
   }
 
   auto buttons = *desc & 0b11;
