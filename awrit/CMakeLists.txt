@@ -209,6 +209,7 @@ if(OS_MAC)
   set(RESOURCES ${CEF_RESOURCES_SRCS})
   COPY_MAC_RESOURCES("${RESOURCES}" "${PREFIXES}" "${CEF_TARGET}" "${CMAKE_CURRENT_SOURCE_DIR}" "${CEF_APP}")
 
+  set(AWRIT_BIN "awrit.app/Contents/MacOS/awrit")
   set(AWRIT_SHIM "${CEF_TARGET_OUT_DIR}/awrit")
   configure_file(awrit_shim.sh "${AWRIT_SHIM}" @ONLY NEWLINE_STYLE UNIX)
   install(TARGETS "${CEF_TARGET}" BUNDLE DESTINATION "lib/awrit")
