@@ -80,6 +80,8 @@ endif()
 # Determine the target output directory.
 SET_CEF_TARGET_OUT_DIR()
 
+set(CMAKE_INSTALL_MESSAGE NEVER)
+
 # LINUX
 if(OS_LINUX)
 
@@ -102,6 +104,13 @@ COPY_FILES("${CEF_TARGET}" "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_
 COPY_SINGLE_FILE("${CEF_TARGET}" "${CMAKE_SOURCE_DIR}/LICENSE.txt" "${CEF_TARGET_OUT_DIR}/LICENSE.txt")
 
 SET_LINUX_SUID_PERMISSIONS("${CEF_TARGET}" "${CEF_TARGET_OUT_DIR}/chrome-sandbox")
+
+install(DIRECTORY "${CEF_TARGET_OUT_DIR}/" DESTINATION "lib/awrit" USE_SOURCE_PERMISSIONS)
+# configure the shim at install time to have a fixed path
+install(CODE "set(AWRIT_LIB_PREFIX \"\${CMAKE_INSTALL_PREFIX}/lib/awrit\")
+set(AWRIT_BIN \"/awrit\")
+configure_file(\"${CMAKE_CURRENT_SOURCE_DIR}/awrit_shim.sh\" \"\${CMAKE_INSTALL_PREFIX}/bin/awrit\" @ONLY NEWLINE_STYLE UNIX)
+")
 
 endif()
 
@@ -199,6 +208,15 @@ if(OS_MAC)
     )
   set(RESOURCES ${CEF_RESOURCES_SRCS})
   COPY_MAC_RESOURCES("${RESOURCES}" "${PREFIXES}" "${CEF_TARGET}" "${CMAKE_CURRENT_SOURCE_DIR}" "${CEF_APP}")
+
+  set(AWRIT_SHIM "${CEF_TARGET_OUT_DIR}/awrit")
+  configure_file(awrit_shim.sh "${AWRIT_SHIM}" @ONLY NEWLINE_STYLE UNIX)
+  install(TARGETS "${CEF_TARGET}" BUNDLE DESTINATION "lib/awrit")
+  # configure the shim at install time to have a fixed path
+  install(CODE "set(AWRIT_LIB_PREFIX \"\${CMAKE_INSTALL_PREFIX}/lib/awrit\")
+  set(AWRIT_BIN \"/awrit.app/Contents/MacOS/awrit\")
+  configure_file(\"${CMAKE_CURRENT_SOURCE_DIR}/awrit_shim.sh\" \"\${CMAKE_INSTALL_PREFIX}/bin/awrit\" @ONLY NEWLINE_STYLE UNIX)
+  ")
 endif()
 
 set(AWRIT_UNIT_TEST_SRCS
@@ -209,7 +227,7 @@ set(AWRIT_UNIT_TEST_SRCS
 
 source_group(awrit_unit_tests FILES ${AWRIT_UNIT_TEST_SRCS})
 
-add_executable(awrit_unit_tests ${AWRIT_UNIT_TEST_SRCS})
+add_executable(awrit_unit_tests EXCLUDE_FROM_ALL ${AWRIT_UNIT_TEST_SRCS})
 target_link_libraries(awrit_unit_tests ${AWRIT_INTERNAL_LIBS} GTest::gtest_main)
 
 include(GoogleTest)
@@ -220,5 +238,5 @@ add_custom_target(test
   DEPENDS "${CEF_TARGET_OUT_DIR}/awrit_unit_tests"
 )
 
-add_executable(input_event_test tty/input_event_test.cc)
+add_executable(input_event_test EXCLUDE_FROM_ALL tty/input_event_test.cc)
 target_link_libraries(input_event_test PRIVATE tty)
