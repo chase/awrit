@@ -6,6 +6,8 @@ https://github.com/chase/awrit/assets/5411/2c3b0b02-3c49-443d-9865-95aeeb9d1275
 
 Yep, actual Chromium being rendered in your favorite terminal that supports the [Kitty terminal graphics protocol](https://sw.kovidgoyal.net/kitty/graphics-protocol/).
 
+**`awrit` works best in [Kitty v0.28 or newer](https://github.com/kovidgoyal/kitty/releases)**
+
 ## Why?
 
 - Display documentation from [DevDocs](https://devdocs.io)
@@ -22,7 +24,7 @@ Yep, actual Chromium being rendered in your favorite terminal that supports the 
 
 **Linux**:
 
-- `build-essential ninja-build cmake`
+- Install these packages: `build-essential ninja-build cmake`
 
 **macOS**:
 
