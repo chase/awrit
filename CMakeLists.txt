@@ -16,12 +16,7 @@ if(POLICY CMP0135)
   cmake_policy(SET CMP0135 OLD)
 endif()
 
-set(CEF_VERSION 113.1.4+g327635f+chromium-113.0.5672.63)
-# TODO: fetch the checksum from the CDN itself
-set(CEF_WIN_64_SHA 7717bbae3043ce99b761764e7754430b079dea7a)
-set(CEF_LINUX_64_SHA fc51b4b80cdf961947b386407fe411a32cc043fa)
-set(CEF_MAC_ARM64_SHA a537fea97d388131a0718b3b4622b02260bcd9ae)
-
+set(CEF_VERSION 120.1.10+g3ce3184+chromium-120.0.6099.129)
 set(GTEST_VERSION v1.13.0)
 SET(GTEST_SHA bfa4b5131b6eaac06962c251742c96aab3f7aa78)
 
@@ -46,27 +41,43 @@ if(NOT DEFINED PROJECT_ARCH)
   endif()
 endif()
 
-if (OS_MAC AND PROJECT_ARCH STREQUAL "x86_64")
-  message(FATAL_ERROR "Only arm64 is supported on macOS")
-elseif (NOT OS_MAC AND PROJECT_ARCH STREQUAL "arm64")
+if (NOT OS_MAC AND PROJECT_ARCH STREQUAL "arm64")
   message(FATAL_ERROR "Only x64 is supported on Windows and Linux")
 endif()
 
 if (OS_MAC)
-  set(CEF_PLATFORM "macosarm64")
-  set(CEF_SHA ${CEF_MAC_ARM64_SHA})
+  if (PROJECT_ARCH STREQUAL "x86_64")
+    set(CEF_PLATFORM "macosx64")
+  else()
+    set(CEF_PLATFORM "macosarm64")
+  endif()
 elseif(OS_LINUX)
   set(CEF_PLATFORM "linux64")
-  set(CEF_SHA ${CEF_LINUX_64_SHA})
 elseif(OS_WINDOWS)
   set(CEF_PLATFORM "windows64")
-  set(CEF_SHA ${CEF_WIN_64_SHA})
 endif()
 
 include(FetchContent)
 # Download CEF if necessary
 Set(FETCHCONTENT_QUIET FALSE)
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
+find_program(JQ_EXISTS "jq")
+if(NOT JQ_EXISTS)
+    message(FATAL "Unable to find jq in PATH")
+endif()
+
+set(INDEX_FILE "${CMAKE_BINARY_DIR}/index.json")
+message(STATUS "Downloading index.json")
+file(DOWNLOAD https://cef-builds.spotifycdn.com/index.json ${INDEX_FILE})
+
+execute_process(
+  COMMAND jq -r ".${CEF_PLATFORM}.versions[] | select (.channel == \"stable\") | select (.cef_version == \"${CEF_VERSION}\")| .files[] | select(.type == \"minimal\") .sha1" 
+  "${INDEX_FILE}" 
+  OUTPUT_VARIABLE 
+  CEF_SHA
+)
+string(STRIP "${CEF_SHA}" CEF_SHA)
+message(STATUS "CEF_SHA = ${CEF_SHA}")
+
 FetchContent_Declare(
   cef_minimal
   URL https://cef-builds.spotifycdn.com/cef_binary_${CEF_VERSION}_${CEF_PLATFORM}_minimal.tar.bz2
@@ -74,14 +85,6 @@ FetchContent_Declare(
   SOURCE_SUBDIR cmake
 )
 FetchContent_MakeAvailable(cef_minimal)
-else()
-FetchContent_Declare(
-  cef_standard
-  URL https://cef-builds.spotifycdn.com/cef_binary_${CEF_VERSION}_${CEF_PLATFORM}.tar.bz2
-  SOURCE_SUBDIR cmake
-)
-FetchContent_MakeAvailable(cef_standard)
-endif()
 
 # gtest v1.13.0
 FetchContent_Declare(
