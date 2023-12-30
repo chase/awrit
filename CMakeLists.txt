@@ -69,22 +69,30 @@ set(INDEX_FILE "${CMAKE_BINARY_DIR}/index.json")
 message(STATUS "Downloading index.json")
 file(DOWNLOAD https://cef-builds.spotifycdn.com/index.json ${INDEX_FILE})
 
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CEF_TYPE "minimal")
+else()
+    set(CEF_TYPE "standard")
+endif()
+
 execute_process(
-  COMMAND jq -r ".${CEF_PLATFORM}.versions[] | select (.channel == \"stable\") | select (.cef_version == \"${CEF_VERSION}\")| .files[] | select(.type == \"minimal\") .sha1" 
+  COMMAND jq -rc ".${CEF_PLATFORM}.versions[] | select (.channel == \"stable\") | select (.cef_version == \"${CEF_VERSION}\")| .files[] | select(.type == \"${CEF_TYPE}\")" 
   "${INDEX_FILE}" 
   OUTPUT_VARIABLE 
-  CEF_SHA
+  CEF_FILE_INFO
 )
-string(STRIP "${CEF_SHA}" CEF_SHA)
-message(STATUS "CEF_SHA = ${CEF_SHA}")
+string(STRIP "${CEF_FILE_INFO}" CEF_FILE_INFO)
+
+string(JSON CEF_FILE_SHA GET ${CEF_FILE_INFO} "sha1")
+string(JSON CEF_FILE_NAME GET ${CEF_FILE_INFO} "name")
 
 FetchContent_Declare(
-  cef_minimal
-  URL https://cef-builds.spotifycdn.com/cef_binary_${CEF_VERSION}_${CEF_PLATFORM}_minimal.tar.bz2
-  URL_HASH SHA1=${CEF_SHA}
+  cef_src
+  URL https://cef-builds.spotifycdn.com/${CEF_FILE_NAME}
+  URL_HASH SHA1=${CEF_FILE_SHA}
   SOURCE_SUBDIR cmake
 )
-FetchContent_MakeAvailable(cef_minimal)
+FetchContent_MakeAvailable(cef_src)
 
 # gtest v1.13.0
 FetchContent_Declare(
@@ -101,11 +109,7 @@ FetchContent_MakeAvailable(googletest)
 set_property(GLOBAL PROPERTY OS_FOLDERS ON)
 
 # Setup CEF
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
-set(CEF_ROOT "${cef_minimal_SOURCE_DIR}")
-else()
-set(CEF_ROOT "${cef_standard_SOURCE_DIR}")
-endif()
+set(CEF_ROOT "${cef_src_SOURCE_DIR}")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CEF_ROOT}/cmake")
 
 find_package(CEF REQUIRED)
