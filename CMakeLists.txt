@@ -60,31 +60,51 @@ endif()
 include(FetchContent)
 # Download CEF if necessary
 Set(FETCHCONTENT_QUIET FALSE)
-find_program(JQ_EXISTS "jq")
-if(NOT JQ_EXISTS)
-    message(FATAL "Unable to find jq in PATH")
-endif()
 
-set(INDEX_FILE "${CMAKE_BINARY_DIR}/index.json")
-message(STATUS "Downloading index.json")
-file(DOWNLOAD https://cef-builds.spotifycdn.com/index.json ${INDEX_FILE})
+function(GetCEFFileInfoForVesion INPUT_VERSION)
+  # Fetch index file to resolve file name and sha1
+  set(INDEX_FILE "${CMAKE_BINARY_DIR}/index.json")
+  message(STATUS "Downloading index.json")
+  file(DOWNLOAD https://cef-builds.spotifycdn.com/index.json ${INDEX_FILE})
 
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
+  if (CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CEF_TYPE "minimal")
-else()
+  else()
     set(CEF_TYPE "standard")
-endif()
+  endif()
 
-execute_process(
-  COMMAND jq -rc ".${CEF_PLATFORM}.versions[] | select (.channel == \"stable\") | select (.cef_version == \"${CEF_VERSION}\")| .files[] | select(.type == \"${CEF_TYPE}\")" 
-  "${INDEX_FILE}" 
-  OUTPUT_VARIABLE 
-  CEF_FILE_INFO
-)
-string(STRIP "${CEF_FILE_INFO}" CEF_FILE_INFO)
+  # Read the file to memory and get the number of versions
+  file(READ "${CMAKE_BINARY_DIR}/index.json" INDEX_CONTENT)
+  string(JSON CEF_VERSIONS GET "${INDEX_CONTENT}" "${CEF_PLATFORM}" versions)
+  string(JSON CEF_VERSIONS_LENGTH LENGTH "${CEF_VERSIONS}")   
 
-string(JSON CEF_FILE_SHA GET ${CEF_FILE_INFO} "sha1")
-string(JSON CEF_FILE_NAME GET ${CEF_FILE_INFO} "name")
+  foreach(VERSION_IDX RANGE ${CEF_VERSIONS_LENGTH})
+    # Find desired version and channel
+    string(JSON CHANNEL GET "${CEF_VERSIONS}" ${VERSION_IDX} channel)
+    string(JSON VERSION GET "${CEF_VERSIONS}" ${VERSION_IDX} cef_version)
+    if(("${CHANNEL}" STREQUAL "stable") AND ("${VERSION}" STREQUAL "${INPUT_VERSION}"))
+
+      # Find desired file type and extract name and sha1
+      string(JSON FILES GET "${CEF_VERSIONS}" ${VERSION_IDX} files)
+      string(JSON FILES_LENGTH LENGTH "${FILES}")   
+      foreach(FILE_IDX RANGE ${FILES_LENGTH})
+        string(JSON FILE_TYPE GET "${CEF_VERSIONS}" ${VERSION_IDX} files ${FILE_IDX} type)
+        if ("${FILE_TYPE}" STREQUAL "${CEF_TYPE}")
+          string(JSON SHA GET ${CEF_FILE_INFO} "${CEF_VERSIONS}" ${VERSION_IDX} files ${FILE_IDX} sha1)
+          string(JSON NAME GET ${CEF_FILE_INFO} "${CEF_VERSIONS}" ${VERSION_IDX} files ${FILE_IDX} name)
+
+          # Set vars bask to main scope
+          set(CEF_FILE_SHA "${SHA}" PARENT_SCOPE)
+          set(CEF_FILE_NAME  "${NAME}" PARENT_SCOPE)
+          return()
+        endif()
+      endforeach()
+    endif()
+  endforeach()
+endfunction()
+
+GetCEFFileInfoForVesion("${CEF_VERSION}")
+message(STATUS "Resolved CEF file ${CEF_FILE_NAME} with sha ${CEF_FILE_SHA}")
 
 FetchContent_Declare(
   cef_src
