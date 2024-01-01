@@ -119,7 +119,7 @@ if(['textarea', 'input'].includes(document.activeElement.tagName.toLowerCase()))
   // https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_code_values#code_values_on_linux_x11
   // https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_code_values#code_values_on_mac
   // clang-format off
-  static const std::unordered_map<KeyboardCode::Type, char16> windows_key_to_native_key {
+  static const std::unordered_map<KeyboardCode::Type, char16_t> windows_key_to_native_key {
 #if defined(OS_LINUX)
     {KeyboardCode::VKEY_RCONTROL, 0x0069},
     {KeyboardCode::VKEY_LCONTROL, 0x0025},
@@ -161,7 +161,7 @@ if(['textarea', 'input'].includes(document.activeElement.tagName.toLowerCase()))
 #endif
   };
   // native key, windows key
-  static const std::unordered_map<int, std::tuple<char16, int>> key_to_code {
+  static const std::unordered_map<int, std::tuple<char16_t, int>> key_to_code {
   #if defined(OS_LINUX)
     {'-', {0x14, KeyboardCode::VKEY_OEM_MINUS}},
     {'_', {0x14, KeyboardCode::VKEY_OEM_MINUS}},

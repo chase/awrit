@@ -16,12 +16,7 @@ if(POLICY CMP0135)
   cmake_policy(SET CMP0135 OLD)
 endif()
 
-set(CEF_VERSION 113.1.4+g327635f+chromium-113.0.5672.63)
-# TODO: fetch the checksum from the CDN itself
-set(CEF_WIN_64_SHA 7717bbae3043ce99b761764e7754430b079dea7a)
-set(CEF_LINUX_64_SHA fc51b4b80cdf961947b386407fe411a32cc043fa)
-set(CEF_MAC_ARM64_SHA a537fea97d388131a0718b3b4622b02260bcd9ae)
-
+set(CEF_VERSION 120.1.10+g3ce3184+chromium-120.0.6099.129)
 set(GTEST_VERSION v1.13.0)
 SET(GTEST_SHA bfa4b5131b6eaac06962c251742c96aab3f7aa78)
 
@@ -46,42 +41,78 @@ if(NOT DEFINED PROJECT_ARCH)
   endif()
 endif()
 
-if (OS_MAC AND PROJECT_ARCH STREQUAL "x86_64")
-  message(FATAL_ERROR "Only arm64 is supported on macOS")
-elseif (NOT OS_MAC AND PROJECT_ARCH STREQUAL "arm64")
+if (NOT OS_MAC AND PROJECT_ARCH STREQUAL "arm64")
   message(FATAL_ERROR "Only x64 is supported on Windows and Linux")
 endif()
 
 if (OS_MAC)
-  set(CEF_PLATFORM "macosarm64")
-  set(CEF_SHA ${CEF_MAC_ARM64_SHA})
+  if (PROJECT_ARCH STREQUAL "x86_64")
+    set(CEF_PLATFORM "macosx64")
+  else()
+    set(CEF_PLATFORM "macosarm64")
+  endif()
 elseif(OS_LINUX)
   set(CEF_PLATFORM "linux64")
-  set(CEF_SHA ${CEF_LINUX_64_SHA})
 elseif(OS_WINDOWS)
   set(CEF_PLATFORM "windows64")
-  set(CEF_SHA ${CEF_WIN_64_SHA})
 endif()
 
 include(FetchContent)
 # Download CEF if necessary
 Set(FETCHCONTENT_QUIET FALSE)
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
+
+function(GetCEFFileInfoForVesion INPUT_VERSION)
+  # Fetch index file to resolve file name and sha1
+  set(INDEX_FILE "${CMAKE_BINARY_DIR}/index.json")
+  message(STATUS "Downloading index.json")
+  file(DOWNLOAD https://cef-builds.spotifycdn.com/index.json ${INDEX_FILE})
+
+  if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CEF_TYPE "minimal")
+  else()
+    set(CEF_TYPE "standard")
+  endif()
+
+  # Read the file to memory and get the number of versions
+  file(READ "${CMAKE_BINARY_DIR}/index.json" INDEX_CONTENT)
+  string(JSON CEF_VERSIONS GET "${INDEX_CONTENT}" "${CEF_PLATFORM}" versions)
+  string(JSON CEF_VERSIONS_LENGTH LENGTH "${CEF_VERSIONS}")   
+
+  foreach(VERSION_IDX RANGE ${CEF_VERSIONS_LENGTH})
+    # Find desired version and channel
+    string(JSON CHANNEL GET "${CEF_VERSIONS}" ${VERSION_IDX} channel)
+    string(JSON VERSION GET "${CEF_VERSIONS}" ${VERSION_IDX} cef_version)
+    if(("${CHANNEL}" STREQUAL "stable") AND ("${VERSION}" STREQUAL "${INPUT_VERSION}"))
+
+      # Find desired file type and extract name and sha1
+      string(JSON FILES GET "${CEF_VERSIONS}" ${VERSION_IDX} files)
+      string(JSON FILES_LENGTH LENGTH "${FILES}")   
+      foreach(FILE_IDX RANGE ${FILES_LENGTH})
+        string(JSON FILE_TYPE GET "${CEF_VERSIONS}" ${VERSION_IDX} files ${FILE_IDX} type)
+        if ("${FILE_TYPE}" STREQUAL "${CEF_TYPE}")
+          string(JSON SHA GET ${CEF_FILE_INFO} "${CEF_VERSIONS}" ${VERSION_IDX} files ${FILE_IDX} sha1)
+          string(JSON NAME GET ${CEF_FILE_INFO} "${CEF_VERSIONS}" ${VERSION_IDX} files ${FILE_IDX} name)
+
+          # Set vars bask to main scope
+          set(CEF_FILE_SHA "${SHA}" PARENT_SCOPE)
+          set(CEF_FILE_NAME  "${NAME}" PARENT_SCOPE)
+          return()
+        endif()
+      endforeach()
+    endif()
+  endforeach()
+endfunction()
+
+GetCEFFileInfoForVesion("${CEF_VERSION}")
+message(STATUS "Resolved CEF file ${CEF_FILE_NAME} with sha ${CEF_FILE_SHA}")
+
 FetchContent_Declare(
-  cef_minimal
-  URL https://cef-builds.spotifycdn.com/cef_binary_${CEF_VERSION}_${CEF_PLATFORM}_minimal.tar.bz2
-  URL_HASH SHA1=${CEF_SHA}
+  cef_src
+  URL https://cef-builds.spotifycdn.com/${CEF_FILE_NAME}
+  URL_HASH SHA1=${CEF_FILE_SHA}
   SOURCE_SUBDIR cmake
 )
-FetchContent_MakeAvailable(cef_minimal)
-else()
-FetchContent_Declare(
-  cef_standard
-  URL https://cef-builds.spotifycdn.com/cef_binary_${CEF_VERSION}_${CEF_PLATFORM}.tar.bz2
-  SOURCE_SUBDIR cmake
-)
-FetchContent_MakeAvailable(cef_standard)
-endif()
+FetchContent_MakeAvailable(cef_src)
 
 # gtest v1.13.0
 FetchContent_Declare(
@@ -98,11 +129,7 @@ FetchContent_MakeAvailable(googletest)
 set_property(GLOBAL PROPERTY OS_FOLDERS ON)
 
 # Setup CEF
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
-set(CEF_ROOT "${cef_minimal_SOURCE_DIR}")
-else()
-set(CEF_ROOT "${cef_standard_SOURCE_DIR}")
-endif()
+set(CEF_ROOT "${cef_src_SOURCE_DIR}")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CEF_ROOT}/cmake")
 
 find_package(CEF REQUIRED)
