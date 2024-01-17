@@ -28,7 +28,7 @@ Yep, actual Chromium being rendered in your favorite terminal that supports the 
 
 **macOS**:
 
-- Xcode 14.0 or greater (required for C++20 support)
+- Xcode 14.3, try [xcodes](https://github.com/XcodesOrg/xcodes)
 - Brew: `brew install ninja cmake`
 - MacPorts: `port install ninja cmake`
 
