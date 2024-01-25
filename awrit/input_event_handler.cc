@@ -386,10 +386,10 @@ void InputEventParserImpl::HandleMouse(
   } else if (mouse_event.buttons & Button::WheelUp ||
              mouse_event.buttons & Button::WheelDown) {
     active->GetHost()->SendMouseWheelEvent(
-        event, 0, mouse_event.buttons & Button::WheelUp ? 10 : -10);
+        event, 0, mouse_event.buttons & Button::WheelUp ? 25 : -25);
   } else if (mouse_event.buttons & Button::WheelLeft ||
              mouse_event.buttons & Button::WheelRight) {
     active->GetHost()->SendMouseWheelEvent(
-        event, mouse_event.buttons & Button::WheelLeft ? -10 : 10, 0);
+        event, mouse_event.buttons & Button::WheelLeft ? -25 : 25, 0);
   }
 }
