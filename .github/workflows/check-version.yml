@@ -1,0 +1,31 @@
+name: Checks if the current version's tag has been released
+
+on:
+  workflow_call:
+    outputs:
+      version:
+        description: "The version number of the release"
+        value: ${{ jobs.check_version.outputs.version }}
+      should_run:
+        description: "Whether other jobs should run or not (false or empty)"
+        value: ${{ jobs.check_version.outputs.should_run }}
+
+jobs:
+  check_version:
+    runs-on: ubuntu-latest
+    name: Check latest commit
+    outputs:
+      version: ${{ steps.check_version.outputs.version }}
+      should_run: ${{ steps.check_version.outputs.should_run }}
+    steps:
+      - id: check_version
+        continue-on-error: true
+        name: check latest commit version is tagged
+        run: |
+          git clone --no-checkout --depth=1 --sparse --filter=blob:none --branch=${{github.ref_name}} --single-branch https://github.com/${{ github.repository }} lok
+          cd lok
+          git checkout
+          echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
+          if git ls-remote --tags --exit-code -q https://github.com/${{ github.repository }} "refs/tags/$(cat VERSION)"; then
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+          fi

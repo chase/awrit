@@ -1,0 +1,57 @@
+name: Build and release for macOS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check_version:
+    uses: ./.github/workflows/check-version.yml
+  macos-build:
+    needs: [check_version]
+    if: ${{ needs.check_version.outputs.should_run != 'false' }}
+    runs-on: ${{ matrix.runner }}
+    name: Build Mac ${{ matrix.arch }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - arch: x86_64
+            runner: macos-12
+          - arch: arm64
+            runner: macos-14
+
+    # Thanks for your contribution @noahlias!
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup CMake and Ninja
+        uses: lukka/get-cmake@latest
+        with:
+            cmakeVersion: 3.25.2
+            ninjaVersion: 1.11.1
+
+      # https://github.com/actions/runner-images/blob/main/images/macos/macos-14-arm64-Readme.md
+      - name: Build project
+        run: |
+          export DEVELOPER_DIR=/Applications/Xcode_14.3.1.app/Contents/Developer
+          sudo xcode-select -s $DEVELOPER_DIR
+          cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -S . -B build
+          cmake --build build
+          cp LICENSE.txt build/awrit/Release/LICENSE
+          tar cJf awrit-mac-${{ matrix.arch }}.tar.xz -C build/awrit/Release awrit.app LICENSE
+          shasum -a 256 awrit-mac-${{ matrix.arch }}.tar.xz > awrit-mac-${{ matrix.arch }}.tar.xz.sha256sum
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "awrit-mac-${{ matrix.arch }}.tar.xz,awrit-mac-${{ matrix.arch }}.tar.xz.sha256sum"
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          name: ${{ needs.check_version.outputs.version }}
+          tag: ${{ needs.check_version.outputs.version }}
+          body: |
+            This is an automated release built from the `main` branch.
+            For changes, please review the commit log.
