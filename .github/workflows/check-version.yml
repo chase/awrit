@@ -22,10 +22,10 @@ jobs:
         continue-on-error: true
         name: check latest commit version is tagged
         run: |
-          git clone --no-checkout --depth=1 --sparse --filter=blob:none --branch=${{github.ref_name}} --single-branch https://github.com/${{ github.repository }} lok
-          cd lok
+          git clone --no-checkout --depth=1 --sparse --filter=blob:none --branch=${{github.ref_name}} --single-branch https://github.com/${{ github.repository }} awrit
+          cd awrit
           git checkout
-          echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
-          if git ls-remote --tags --exit-code -q https://github.com/${{ github.repository }} "refs/tags/$(cat VERSION)"; then
+          echo "version=$(cat VERSION_)" >> "$GITHUB_OUTPUT"
+          if git ls-remote --tags --exit-code -q https://github.com/${{ github.repository }} "refs/tags/$(cat VERSION_)"; then
             echo "should_run=false" >> "$GITHUB_OUTPUT"
           fi
