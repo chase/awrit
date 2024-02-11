@@ -15,6 +15,11 @@ Yep, actual Chromium being rendered in your favorite terminal that supports the 
 - Tiled layout without a tiling window manager using [Kitty's layouts](https://sw.kovidgoyal.net/kitty/layouts/)
 - Add fancy UI using web technologies, so NeoVim can pretend it is Emacs instead of the other way around
 
+## Installing from Brew (macOS only)
+```bash
+brew install chase/tap/awrit
+```
+
 ## Building
 
 **Prerequisites**
@@ -42,7 +47,7 @@ cmake --build build
 # The build can be run from the top-level directory with ./build/awrit/Release/awrit
 ```
 
-## Installing
+## Installing from Source
 
 After building:
 
