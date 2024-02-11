@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   check_version:
     uses: ./.github/workflows/check-version.yml
@@ -40,8 +43,9 @@ jobs:
           sudo xcode-select -s $DEVELOPER_DIR
           cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -S . -B build
           cmake --build build
-          cp LICENSE.txt build/awrit/Release/LICENSE
-          tar cJf awrit-mac-${{ matrix.arch }}.tar.xz -C build/awrit/Release awrit.app LICENSE
+          cmake --install build --prefix prefix
+          cp LICENSE.txt prefix/lib/awrit/LICENSE
+          tar cJf awrit-mac-${{ matrix.arch }}.tar.xz -C prefix .
           shasum -a 256 awrit-mac-${{ matrix.arch }}.tar.xz > awrit-mac-${{ matrix.arch }}.tar.xz.sha256sum
 
       - name: Create release
