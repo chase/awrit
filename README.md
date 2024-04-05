@@ -30,6 +30,7 @@ brew install chase/tap/awrit
 **Linux**:
 
 - Install these packages: `build-essential ninja-build cmake`
+- For ArchLinux install these packages using `sudo pacman -S ninja cmake base-devel`
 
 **macOS**:
 
