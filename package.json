@@ -1,0 +1,39 @@
+{
+  "name": "awrit",
+  "version": "1.0.0",
+  "description": "A full graphical web browser for Kitty terminal with mouse and keyboard support",
+  "main": "index.js",
+  "author": "Chase Colman",
+  "homepage": "https://github.com/chase/awrit",
+  "type": "module",
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
+    "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "start": "electron-vite dev",
+    "test": "vitest",
+    "input-test": "vite-node ./src/main/tty/inputTest.ts",
+    "build": "npm run typecheck && electron-vite build",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "@electron-toolkit/preload": "^3.0.0",
+    "@electron-toolkit/utils": "^3.0.0"
+  },
+  "devDependencies": {
+    "@electron-toolkit/eslint-config-prettier": "^2.0.0",
+    "@electron-toolkit/eslint-config-ts": "^1.0.1",
+    "@electron-toolkit/tsconfig": "^1.0.1",
+    "@types/node": "^18.19.9",
+    "electron": "^28.2.0",
+    "electron-builder": "^24.9.1",
+    "electron-vite": "^2.0.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vitest": "^1.6.0"
+  }
+}
