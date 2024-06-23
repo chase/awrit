@@ -4,6 +4,7 @@ import {
   CSI,
   DECSACE_DEFAULT_REGION_SELECT,
   ESC,
+  MODE,
   RESET_IRM,
   RESTORE_COLORS,
   RESTORE_CURSOR,
@@ -76,7 +77,7 @@ export enum Mode {
 export const setModes = (modes: Mode[], enabled: boolean) => {
   let buf = '';
   for (const mode of modes) {
-    buf += CSI`${enabled ? mode + 'h' : mode + 'l'}`;
+    buf += CSI`${MODE}${enabled ? mode + 'h' : mode + 'l'}`;
   }
   stdout.write(buf);
 };
