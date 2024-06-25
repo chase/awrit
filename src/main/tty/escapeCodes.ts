@@ -18,6 +18,16 @@ export function CSI(strings: TemplateStringsArray, ...args: StringLike[]) {
   return ret;
 }
 
+export function GFX(strings: TemplateStringsArray, ...args: StringLike[]) {
+  let ret = `${ESC_CODE}_G`;
+  for (let n = 0; n < strings.length; n++) {
+    ret += strings[n];
+    if (n < args.length) ret += args[n];
+  }
+  return ret + `${ESC_CODE}\\`;
+}
+
+
 export const MODE = '?'; // DEC private mode
 export const S7C1T = ESC` F`;
 export const SAVE_CURSOR = ESC`7`;

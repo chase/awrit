@@ -15,12 +15,14 @@
     "start": "electron-vite dev",
     "test": "vitest",
     "input-test": "vite-node ./src/main/tty/inputTest.ts",
+    "gfx-test": "vite-node ./src/main/tty/graphicsTest.ts",
     "build": "npm run typecheck && electron-vite build",
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
-    "@electron-toolkit/utils": "^3.0.0"
+    "@electron-toolkit/utils": "^3.0.0",
+    "shm-write": "github:chase/node-shm-write"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",

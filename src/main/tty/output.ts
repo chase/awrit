@@ -14,6 +14,7 @@ import {
   SAVE_CURSOR,
   SAVE_PRIVATE_MODE_VALUES,
 } from './escapeCodes';
+import { Point } from './graphics';
 
 export const clearScreen = () => {
   stdout.write(CLEAR_SCREEN);
@@ -23,38 +24,13 @@ export function setTitle(title: string) {
   stdout.write(ESC`]2;${title}\a`);
 }
 
-export interface Size {
-  width: number;
-  height: number;
-}
-
-export interface Point {
-  x: number;
-  y: number;
-}
-
 export function requestWindowSize() {
   stdout.write(CSI`14t`);
 }
 
 export function placeCursor(point: Point = { x: 0, y: 0 }) {
-  stdout.write(CSI`${point.x};${point.y}H`);
+  stdout.write(CSI`${point.y};${point.x}H`);
 }
-
-export const paintBitmap = (
-  name: string,
-  size: Size,
-  point: Point = { x: 0, y: 0 },
-  type: string = 's'
-) => {
-  const encoded = Buffer.from(name).toString('base64');
-  placeCursor({ x: 0, y: 0 });
-  stdout.write(
-    ESC`_Gf=32,a=T,s=${size.width},v=${size.height},t=${type},x=${point.x},y=${point.y},C=1;`
-  );
-  stdout.write(encoded);
-  stdout.write(ESC + '\\');
-};
 
 export enum Mode {
   cursorKeyToApp = 1,
