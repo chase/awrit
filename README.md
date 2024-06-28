@@ -1,3 +1,6 @@
+# ⚠️ THIS BRANCH IS NOT READY FOR USE ⚠️ 
+Any issues regarding this branch will be closed without comment as `wontfix`
+
 # Actual Web Rendering in Terminal
 
 Or just `awrit`.
