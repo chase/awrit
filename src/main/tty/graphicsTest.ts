@@ -1,4 +1,4 @@
-import { shmUnlink, shmWrite } from 'shm-write';
+import { shmUnlink, shmWrite } from 'awrit-native';
 import { clearPlacements, compositeFrame, freeImage, loadFrame, paintInitialFrame } from './kittyGraphics';
 import { cleanup, placeCursor, setup } from './output';
 import { pseudoRandomBytes } from 'crypto';

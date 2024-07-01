@@ -59,8 +59,6 @@ export const setModes = (modes: Mode[], enabled: boolean) => {
 };
 
 export const setup = () => {
-  stdout.resume();
-
   stdout.write(
     S7C1T +
       SAVE_CURSOR +

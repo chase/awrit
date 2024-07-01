@@ -22,7 +22,7 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
-    "shm-write": "github:chase/node-shm-write"
+    "awrit-native": "github:chase/node-awrit-native"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
