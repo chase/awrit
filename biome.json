@@ -1,4 +1,10 @@
 {
+  "files": {
+    "ignore": ["tsconfig.json", "tsconfig.*.json"]
+  },
+  "vcs": {
+    "useIgnoreFile": true
+  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
