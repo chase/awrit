@@ -21,7 +21,7 @@ Yep, actual Chromium being rendered in your favorite terminal that supports the 
 ## Running
 
 ``` bash
-npm install --loglevel=error # install but skip useless deprecation warnings
+npm install
 npm run start
 ```
 

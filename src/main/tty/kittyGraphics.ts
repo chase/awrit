@@ -1,6 +1,6 @@
 import { stdout } from 'node:process';
 import { GFX } from './escapeCodes';
-import { Point, Size } from './graphics';
+import type { Point, Size } from './graphics';
 
 const nameBase64Cache: Record<string, string> = {};
 // TODO: request an id instead of forcing it to be 1
@@ -61,12 +61,12 @@ export function compositeFrame(
   sourceFrame: number,
   destinationFrame: number,
   size: Size,
-  destinationPoint: Point = { x: 0, y: 0 }
+  destinationPoint: Point = { x: 0, y: 0 },
 ) {
   // a=c composite animation frame
   // C=1 replace pixels (src copy)
   stdout.write(
-    GFX`a=c,C=1,i=${id},r=${sourceFrame},c=${destinationFrame}${wh_size_(size)}${point_(destinationPoint)}`
+    GFX`a=c,C=1,i=${id},r=${sourceFrame},c=${destinationFrame}${wh_size_(size)}${point_(destinationPoint)}`,
   );
 }
 

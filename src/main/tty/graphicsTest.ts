@@ -1,7 +1,13 @@
 import { shmUnlink, shmWrite } from 'awrit-native';
-import { clearPlacements, compositeFrame, freeImage, loadFrame, paintInitialFrame } from './kittyGraphics';
+import {
+  clearPlacements,
+  compositeFrame,
+  freeImage,
+  loadFrame,
+  paintInitialFrame,
+} from './kittyGraphics';
 import { cleanup, placeCursor, setup } from './output';
-import { pseudoRandomBytes } from 'crypto';
+import { pseudoRandomBytes } from 'node:crypto';
 
 function pause(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -16,7 +22,7 @@ async function main() {
     shmWrite(GFX_TEST_RED, Buffer.alloc(8 * 8 * 4, new Uint8Array([255, 0, 0, 255])));
   } catch (e) {
     shmUnlink(GFX_TEST_WHITE);
-    throw(e);
+    throw e;
   }
   setup();
   placeCursor({ x: 0, y: 0 });

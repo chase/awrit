@@ -14,7 +14,7 @@ import {
   SAVE_CURSOR,
   SAVE_PRIVATE_MODE_VALUES,
 } from './escapeCodes';
-import { Point } from './graphics';
+import type { Point } from './graphics';
 
 export const clearScreen = () => {
   stdout.write(CLEAR_SCREEN);
@@ -65,7 +65,7 @@ export const setup = () => {
       SAVE_PRIVATE_MODE_VALUES +
       SAVE_COLORS +
       DECSACE_DEFAULT_REGION_SELECT +
-      RESET_IRM
+      RESET_IRM,
   );
 
   setModes(
@@ -81,7 +81,7 @@ export const setup = () => {
       Mode.mouseUtf8Mode,
       Mode.mouseSgrMode,
     ],
-    false
+    false,
   );
 
   setModes([Mode.autoRepeat, Mode.autoWrap, Mode.alternateScreen], true);

@@ -5,7 +5,7 @@ import * as sgrMouse from './sgrMouse';
 
 let quitListening = () => {};
 
-const cleanup = (signum: number = 1) => {
+const cleanup = (signum = 1) => {
   quitListening();
   cleanupInput();
   sgrMouse.disable();

@@ -1,4 +1,4 @@
-type StringLike = string | {toString(): string};
+type StringLike = string | { toString(): string };
 export const ESC_CODE = '\x1B';
 export function ESC(strings: TemplateStringsArray, ...args: StringLike[]) {
   let ret = ESC_CODE;
@@ -26,7 +26,6 @@ export function GFX(strings: TemplateStringsArray, ...args: StringLike[]) {
   }
   return ret + `${ESC_CODE}\\`;
 }
-
 
 export const MODE = '?'; // DEC private mode
 export const S7C1T = ESC` F`;
