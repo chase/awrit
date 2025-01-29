@@ -84,7 +84,14 @@ void Setup() {
 
 void Cleanup() {
   fputs(CLEAR_SCREEN, stdout);
-  SetModes({alternate_screen}, false);
+  // clang-format off
+  SetModes({
+    alternate_screen,
+    mouse_move_tracking,
+    mouse_sgr_pixel_mode
+  }, false);
+  // clang-format on
+  SetModes({text_cursor}, true);
   fputs(RESTORE_PRIVATE_MODE_VALUES RESTORE_CURSOR RESTORE_COLORS, stdout);
   fflush(stdout);
 }
