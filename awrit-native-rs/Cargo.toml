@@ -19,7 +19,7 @@ crossterm = { path = "crates/crossterm" }
 ctor = "0.4.1"
 
 [build-dependencies]
-napi-build = "2.0.1"
+napi-build = "2.1.6"
 
 [profile.release]
 lto = true
