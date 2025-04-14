@@ -9,7 +9,7 @@ crate-type = ["cdylib"]
 [dependencies]
 nix = { version = "0.29.0", features = ["fs", "mman"] }
 # Default enable napi4 feature, see https://nodejs.org/api/n-api.html#node-api-version-matrix
-napi = { version = "=3.0.0-alpha.31", default-features = false, features = [
+napi = { version = "=3.0.0-alpha.33", default-features = false, features = [
     "napi5",
 ] }
 napi-derive = "=3.0.0-alpha.29"

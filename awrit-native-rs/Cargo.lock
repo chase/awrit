@@ -15,7 +15,7 @@ dependencies = [
  "base64",
  "bgra-to-rgba",
  "crossterm",
- "ctor 0.4.1",
+ "ctor",
  "napi",
  "napi-build",
  "napi-derive",
@@ -113,28 +113,13 @@ dependencies = [
 
 [[package]]
 name = "ctor"
-version = "0.3.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "21d960ecacd0a1bf55e73144b72de745e7bf275c7952c50e36e8af0a0cb7ab1f"
-dependencies = [
- "ctor-proc-macro 0.0.4",
-]
-
-[[package]]
-name = "ctor"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "07e9666f4a9a948d4f1dff0c08a4512b0f7c86414b23960104c243c10d79f4c3"
 dependencies = [
- "ctor-proc-macro 0.0.5",
+ "ctor-proc-macro",
  "dtor",
 ]
-
-[[package]]
-name = "ctor-proc-macro"
-version = "0.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c426d2ba3e525b39c1f0a9ba41b9fe61878dee11fa4e4a76b6ab440f46c5db5d"
 
 [[package]]
 name = "ctor-proc-macro"
@@ -261,12 +246,12 @@ dependencies = [
 
 [[package]]
 name = "napi"
-version = "3.0.0-alpha.31"
+version = "3.0.0-alpha.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1911b4f0d33fbcb5f46ff68319ec053ab8a655f3a17440eae1246a23ba2ad78"
+checksum = "c857a2b38c994db8bec785554ab4216d45ad63469832070c86a992be0b5491ad"
 dependencies = [
  "bitflags",
- "ctor 0.3.6",
+ "ctor",
  "napi-build",
  "napi-sys",
 ]
