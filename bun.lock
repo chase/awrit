@@ -5,7 +5,7 @@
       "name": "awrit",
       "dependencies": {
         "awrit-native-rs": "./awrit-native-rs",
-        "electron": "^36.2.0",
+        "electron": "^36.2.1",
         "electron-chrome-context-menu": "^1.1.0",
         "electron-chrome-extensions": "^4.7.0",
         "electron-chrome-web-store": "^0.12.0",
@@ -314,7 +314,7 @@
 
     "detect-node": ["detect-node@2.1.0", "", {}, "sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g=="],
 
-    "electron": ["electron@36.2.0", "", { "dependencies": { "@electron/get": "^2.0.0", "@types/node": "^22.7.7", "extract-zip": "^2.0.1" }, "bin": { "electron": "cli.js" } }, "sha512-5yldoRjBKxPQfI0QMX+qq750o3Nl8N1SZnJqOPMq0gZ6rIJ+7y4ZLp808GrFwjfTm05TYgq3GSD8FGuKQZqwEw=="],
+    "electron": ["electron@36.2.1", "", { "dependencies": { "@electron/get": "^2.0.0", "@types/node": "^22.7.7", "extract-zip": "^2.0.1" }, "bin": { "electron": "cli.js" } }, "sha512-mm1Y+Ms46xcOTA69h8hpqfX392HfV4lga9aEkYkd/Syx1JBStvcACOIouCgGrnZpxNZPVS1jM8NTcMkNjuK6BQ=="],
 
     "electron-chrome-context-menu": ["electron-chrome-context-menu@1.1.0", "", { "peerDependencies": { "electron": ">=9.0.0" } }, "sha512-Q2sITVT+xkZ3ru/ZGjb0+tZiAXfZ46KNae0nVZdxI/RGqlM+xRcSgpkP3TmUK/Y205Q7Z5d0f4yWzjgsPWIF/Q=="],
 
