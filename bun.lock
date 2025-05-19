@@ -8,7 +8,7 @@
         "electron": "^36.2.0",
         "electron-chrome-context-menu": "^1.1.0",
         "electron-chrome-extensions": "^4.7.0",
-        "electron-chrome-web-store": "^0.11.0",
+        "electron-chrome-web-store": "^0.12.0",
       },
       "devDependencies": {
         "@biomejs/biome": "1.9.4",
@@ -320,7 +320,7 @@
 
     "electron-chrome-extensions": ["electron-chrome-extensions@4.7.0", "", { "dependencies": { "debug": "^4.3.1" } }, "sha512-2JzJmULysvgD5E0OUE/9MkXe3UZRnHBxLve4olgyJw9I5VbhlGScEyldE7l4/tPbygDvmPjF8Z1hxLMaZPIsLA=="],
 
-    "electron-chrome-web-store": ["electron-chrome-web-store@0.11.0", "", { "dependencies": { "@types/chrome": "^0.0.287", "adm-zip": "^0.5.16", "debug": "^4.3.7", "pbf": "^4.0.1" } }, "sha512-T6xmhawBN7EDub+tqiFvkGtTUfhmALfvXUUVCV+J6gs/ik7hde4KWb3ajVzHOkAS0B33tSi6HbWcPeqO5lFPug=="],
+    "electron-chrome-web-store": ["electron-chrome-web-store@0.12.0", "", { "dependencies": { "@types/chrome": "^0.0.287", "adm-zip": "^0.5.16", "debug": "^4.3.7", "pbf": "^4.0.1" } }, "sha512-CPAd1GOPClZ7IJwWmC0YmpIZhlUU29WpuIicrnu2wllDkaZ2fib4KrWwMIaFE4n5ILsJR12bV8WUxIaltK8BEA=="],
 
     "electron-to-chromium": ["electron-to-chromium@1.5.109", "", {}, "sha512-AidaH9JETVRr9DIPGfp1kAarm/W6hRJTPuCnkF+2MqhF4KaAgRIcBc8nvjk+YMXZhwfISof/7WG29eS4iGxQLQ=="],
 
