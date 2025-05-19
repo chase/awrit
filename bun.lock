@@ -7,7 +7,7 @@
         "awrit-native-rs": "./awrit-native-rs",
         "electron": "^36.2.0",
         "electron-chrome-context-menu": "^1.1.0",
-        "electron-chrome-extensions": "^4.7.0",
+        "electron-chrome-extensions": "^4.8.0",
         "electron-chrome-web-store": "^0.12.0",
       },
       "devDependencies": {
@@ -318,7 +318,7 @@
 
     "electron-chrome-context-menu": ["electron-chrome-context-menu@1.1.0", "", { "peerDependencies": { "electron": ">=9.0.0" } }, "sha512-Q2sITVT+xkZ3ru/ZGjb0+tZiAXfZ46KNae0nVZdxI/RGqlM+xRcSgpkP3TmUK/Y205Q7Z5d0f4yWzjgsPWIF/Q=="],
 
-    "electron-chrome-extensions": ["electron-chrome-extensions@4.7.0", "", { "dependencies": { "debug": "^4.3.1" } }, "sha512-2JzJmULysvgD5E0OUE/9MkXe3UZRnHBxLve4olgyJw9I5VbhlGScEyldE7l4/tPbygDvmPjF8Z1hxLMaZPIsLA=="],
+    "electron-chrome-extensions": ["electron-chrome-extensions@4.8.0", "", { "dependencies": { "debug": "^4.3.1" } }, "sha512-/WydiLHHdRZHSLBbX6OfiqICoKW+ElRDU2cEAFozgTnvtJoFPJZ+qLT0tgfDWyPAlvhwP3yaAYk25fXyRSqx7Q=="],
 
     "electron-chrome-web-store": ["electron-chrome-web-store@0.12.0", "", { "dependencies": { "@types/chrome": "^0.0.287", "adm-zip": "^0.5.16", "debug": "^4.3.7", "pbf": "^4.0.1" } }, "sha512-CPAd1GOPClZ7IJwWmC0YmpIZhlUU29WpuIicrnu2wllDkaZ2fib4KrWwMIaFE4n5ILsJR12bV8WUxIaltK8BEA=="],
 
