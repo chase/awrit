@@ -14,7 +14,7 @@
     "typescript": "~5.8.3",
     "vite": "^6.3.5",
     "vite-plugin-solid": "^2.11.6",
-    "@tailwindcss/vite": "^4.1.10",
+    "@tailwindcss/vite": "^4.1.11",
     "@types/bun": "latest"
   },
   "patchedDependencies": {
