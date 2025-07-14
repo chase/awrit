@@ -5,7 +5,7 @@
       "name": "awrit",
       "dependencies": {
         "awrit-native-rs": "./awrit-native-rs",
-        "electron": "^37.2.0",
+        "electron": "^37.2.1",
         "electron-chrome-context-menu": "^1.1.0",
         "electron-chrome-extensions": "^4.9.0",
         "electron-chrome-web-store": "^0.12.0",
@@ -22,14 +22,14 @@
       "name": "runner",
       "dependencies": {
         "solid-js": "^1.9.7",
-        "tailwindcss": "^4.1.10",
+        "tailwindcss": "^4.1.11",
       },
       "devDependencies": {
-        "@tailwindcss/vite": "^4.1.10",
+        "@tailwindcss/vite": "^4.1.11",
         "@types/bun": "latest",
         "typescript": "~5.8.3",
         "vite": "^6.3.5",
-        "vite-plugin-solid": "^2.11.6",
+        "vite-plugin-solid": "^2.11.7",
       },
     },
   },
@@ -320,7 +320,7 @@
 
     "detect-node": ["detect-node@2.1.0", "", {}, "sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g=="],
 
-    "electron": ["electron@37.2.0", "", { "dependencies": { "@electron/get": "^2.0.0", "@types/node": "^22.7.7", "extract-zip": "^2.0.1" }, "bin": { "electron": "cli.js" } }, "sha512-dE6+qeg6SBUVd5d8CD2+GH82kh+gF1v40+hs+U+UOno681NMSGmBtgqwldQRpbvtnQDD7V2M9Cpfr3+Abw7aBg=="],
+    "electron": ["electron@37.2.1", "", { "dependencies": { "@electron/get": "^2.0.0", "@types/node": "^22.7.7", "extract-zip": "^2.0.1" }, "bin": { "electron": "cli.js" } }, "sha512-ae2EbzRNqIAHlftfCHtbbt6EgJUW8+zxWLONqNnn2iSrLF0O/pbxbff3xcpZYPpmFBs4uqjoi+s4QS7DQ+zZ/w=="],
 
     "electron-chrome-context-menu": ["electron-chrome-context-menu@1.1.0", "", { "peerDependencies": { "electron": ">=9.0.0" } }, "sha512-Q2sITVT+xkZ3ru/ZGjb0+tZiAXfZ46KNae0nVZdxI/RGqlM+xRcSgpkP3TmUK/Y205Q7Z5d0f4yWzjgsPWIF/Q=="],
 
