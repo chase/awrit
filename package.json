@@ -29,7 +29,7 @@
     "electron-chrome-web-store": "^0.13.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.2",
+    "@biomejs/biome": "2.2.4",
     "@sinonjs/fake-timers": "^14.0.0",
     "@types/node": "^24.3.0",
     "@types/sinonjs__fake-timers": "^8.1.5",
