@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "awrit-native-rs": "./awrit-native-rs",
-    "electron": "^37.3.1",
+    "electron": "^38.1.2",
     "electron-chrome-context-menu": "^1.1.0",
     "electron-chrome-extensions": "^4.9.0",
     "electron-chrome-web-store": "^0.13.0"
