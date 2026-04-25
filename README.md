@@ -1,3 +1,9 @@
+I no longer have time to maintain my hobby projects and with the rising number of security issues, I would advise you to look at a more actively maintained fork.
+
+If you use macOS you might enjoy using (cmux)[https://github.com/manaflow-ai/cmux] as a replacement for awrit.
+
+---
+
 # Actual Web Rendering in Terminal
 
 Or just `awrit`.
@@ -14,26 +20,6 @@ Yep, actual Chromium being rendered in your favorite terminal that supports the 
 - Watch the changes from [Vite](https://vitejs.dev) come to life
 - Tiled layout without a tiling window manager using [Kitty's layouts](https://sw.kovidgoyal.net/kitty/layouts/)
 - Add fancy UI using web technologies, so NeoVim can pretend it is Emacs instead of the other way around
-
-## Install
-
-``` bash
-curl -fsS https://chase.github.io/awrit/get | bash
-```
-
-By default, this will download to `~/awrit` and link to `~/.local/bin/awrit`.
-
-You can configure `awrit` by changing `~/awrit/config.js`. See [Configuration](#configuration) for more information.
-
-#### (Optional) Change Download Location or Install Prefix
-
-``` bash
-curl -fsS https://chase.github.io/awrit/get | DOWNLOAD_TO=~/somewhere-completely-different bash
-```
-
-``` bash
-curl -fsS https://chase.github.io/awrit/get | INSTALL_TO=~/.not-local bash
-```
 
 ## Usage
 
