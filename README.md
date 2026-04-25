@@ -1,6 +1,6 @@
 I no longer have time to maintain my hobby projects and with the rising number of security issues, I would advise you to look at a more actively maintained fork.
 
-If you use macOS you might enjoy using (cmux)[https://github.com/manaflow-ai/cmux] as a replacement for awrit.
+If you use macOS you might enjoy using [cmux](https://github.com/manaflow-ai/cmux) as a replacement for awrit.
 
 ---
 
